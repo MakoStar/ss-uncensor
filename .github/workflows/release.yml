@@ -91,6 +91,16 @@ jobs:
           $mb = [math]::Round((Get-Item $out).Length / 1MB, 1)
           Write-Host "portable: $out ($mb MB)"
 
+      - name: Write checksums
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem -Path release -File | Where-Object { $_.Extension -in '.exe', '.zip' }
+          $lines = $files | ForEach-Object {
+            "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower())  $($_.Name)"
+          }
+          Set-Content -Path release/SHA256SUMS.txt -Value $lines -Encoding utf8
+          Get-Content release/SHA256SUMS.txt
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -98,6 +108,7 @@ jobs:
           path: |
             release/*.exe
             release/*.zip
+            release/SHA256SUMS.txt
           if-no-files-found: error
           retention-days: 7
 
@@ -111,11 +122,16 @@ jobs:
             | --- | --- |
             | `ssuncensor-${{ steps.version.outputs.version }}-setup.exe` | 安装版，自带开始菜单/桌面快捷方式与卸载器 |
             | `ssuncensor-${{ steps.version.outputs.version }}-win-x64.zip` | 免安装版，解压出 `ssuncensor/` 目录，双击里面的 `星塔反和谐工具.exe` 运行 |
+            | `SHA256SUMS.txt` | 上面两个包的 SHA256，用于校验下载完整性 |
 
             两个包功能相同。配置、日志、`ResourceTool/`、`output/` 都在程序目录里，删掉目录即彻底卸载。
+
+            **未签名说明**：没有代码签名证书，Windows 首次运行会弹「已保护你的电脑（发布者未知）」。
+            点「更多信息 → 仍要运行」即可；也可以先执行 `Unblock-File <exe 路径>` 清掉网络标记，之后双击不再提示。
           generate_release_notes: true
           prerelease: ${{ contains(steps.version.outputs.version, '-') }}
           files: |
             release/*.exe
             release/*.zip
+            release/SHA256SUMS.txt
           fail_on_unmatched_files: false

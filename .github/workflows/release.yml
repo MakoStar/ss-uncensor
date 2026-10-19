@@ -97,7 +97,6 @@ jobs:
           name: ssuncensor-${{ steps.version.outputs.version }}
           path: |
             release/*.exe
-            release/*.blockmap
             release/*.zip
           if-no-files-found: error
           retention-days: 7
@@ -118,6 +117,5 @@ jobs:
           prerelease: ${{ contains(steps.version.outputs.version, '-') }}
           files: |
             release/*.exe
-            release/*.blockmap
             release/*.zip
           fail_on_unmatched_files: false

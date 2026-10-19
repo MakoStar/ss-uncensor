@@ -1,0 +1,51 @@
+<section class="panel active" id="panel-fetch">
+      <div class="notice" id="fetcher-notice" hidden>
+        <span class="notice-icon">!</span>
+        <span class="notice-text" id="fetcher-notice-text"></span>
+        <span class="notice-actions">
+          <button class="btn ghost" id="btn-fetcher-releases">打开发布页</button>
+          <button class="btn primary" id="btn-fetcher-install">自动下载</button>
+        </span>
+      </div>
+
+      <div class="card controls">
+        <div class="toolbar">
+          <div class="tool-group">
+            <span class="select-wrap">
+              <select id="fetch-platform" class="platform-select" aria-label="平台"></select>
+            </span>
+            <span class="tool-label">区域</span>
+            <div class="regions" id="fetch-regions"></div>
+          </div>
+          <div class="actions">
+            <button class="tip-icon" type="button" aria-label="抓取参数说明">?
+              <span class="tip-body">
+                <span class="tip-note">
+                  点「全部区域」或一个都不勾 = <code>USE_DEFAULT_REGION=false</code>，一次调用抓完所有区域；
+                  勾选具体区域则逐个抓。绿点 = 该平台下本地已有清单，蓝框 = 本次选中。
+                  超时、重试、白名单等在「设置」里改。
+                </span>
+              </span>
+            </button>
+            <button class="btn ghost" id="btn-ping">测试 ping</button>
+            <button class="btn ghost" id="btn-command">查看命令</button>
+            <button class="btn primary" id="btn-fetch">开始抓取</button>
+            <button class="btn danger" id="btn-abort" hidden>中断</button>
+          </div>
+        </div>
+        <pre class="command" id="fetch-command" hidden></pre>
+      </div>
+
+      <div class="card grow">
+        <div class="card-head">
+          <h2>运行日志</h2>
+          <button class="btn ghost" id="btn-clear-log">清空</button>
+        </div>
+        <div class="log" id="run-log"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>抓取结果</h2></div>
+        <div class="regions-summary" id="fetch-summary">尚未抓取</div>
+      </div>
+    </section>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+  <title>星塔反和谐工具</title>
+</head>
+
+<body>
+  <header class="topbar">
+
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-tab="fetch">抓取清单</button>
+      <button class="tab" data-tab="browse">清单预览</button>
+      <button class="tab" data-tab="version">版本登记</button>
+      <button class="tab" data-tab="diff">区域差异</button>
+      <button class="tab" data-tab="uncensor">资源下载</button>
+      <button class="tab" data-tab="resources">查看资源</button>
+      <button class="tab" data-tab="replace">替换资源</button>
+      <button class="tab" data-tab="settings">设置</button>
+    </nav>
+  </header>
+
+  <main id="panels"></main>
+
+  <div id="modals"></div>
+
+  <div class="toasts" id="toasts"></div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

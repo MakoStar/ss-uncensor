@@ -1,0 +1,78 @@
+<div class="modal-mask" id="result-modal" hidden>
+    <div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="result-modal-title">
+      <h3 id="result-modal-title">生成结果</h3>
+      <div class="modal-note" id="result-file">加载中…</div>
+
+      <h4 class="sec-title">两侧对比</h4>
+      <div class="side-compare">
+        <div class="side-col">
+          <div class="side-title base"><b>基准</b><span id="rc-base-region">—</span></div>
+          <div class="side-rows" id="rc-base-rows"></div>
+        </div>
+        <div class="side-col">
+          <div class="side-title target"><b>目标</b><span id="rc-target-region">—</span></div>
+          <div class="side-rows" id="rc-target-rows"></div>
+        </div>
+      </div>
+
+      <h4 class="sec-title">差异统计</h4>
+      <div class="kv-tiles" id="result-kv"></div>
+
+      <div class="file-tools">
+        <div class="file-chip">
+          <span>结果 JSON</span>
+          <code id="res-out-name" title="">—</code>
+          <button class="btn ghost tiny" id="btn-out-preview">预览</button>
+          <button class="btn ghost tiny" id="btn-out-edit">编辑</button>
+        </div>
+        <div class="file-chip">
+          <span>名单 JSON</span>
+          <code id="res-list-name" title="">—</code>
+          <button class="btn ghost tiny" id="btn-list-preview">预览</button>
+          <button class="btn ghost tiny" id="btn-list-edit">编辑</button>
+        </div>
+      </div>
+
+      <div class="result-body">
+        <div class="rb-left">
+          <section class="sub-card">
+            <h4 class="sec-title">文件名单（可增删改查）</h4>
+            <div class="row">
+              <input type="search" id="result-search" placeholder="搜索文件名，如 char_ / npc" />
+              <button class="btn ghost" id="btn-result-add">+ 新增一行</button>
+            </div>
+            <div class="hint" id="result-count"></div>
+          </section>
+
+          <section class="sub-card">
+            <h4 class="sec-title">排除规则（从名单里移除匹配项）</h4>
+            <div class="row">
+              <input type="text" id="rule-pattern" placeholder="npc / ^npc / npc_xxx.unity3d" />
+              <select id="rule-mode">
+                <option value="contains">包含</option>
+                <option value="startsWith">开头匹配</option>
+                <option value="endsWith">结尾匹配</option>
+                <option value="exact">完全相同</option>
+                <option value="regex">正则</option>
+              </select>
+              <button class="btn ghost" id="btn-rule-apply">移除匹配项</button>
+            </div>
+            <div class="rule-chips" id="rule-chips"></div>
+          </section>
+        </div>
+
+        <div class="rb-right">
+          <h4 class="sec-title">文件列表</h4>
+          <div class="edit-list" id="result-list"></div>
+        </div>
+      </div>
+
+      <p class="modal-error" id="result-error" hidden></p>
+      <div class="modal-actions">
+        <span class="modal-note left" id="result-hint"></span>
+        <span class="spacer"></span>
+        <button class="btn ghost" id="btn-result-cancel">取消</button>
+        <button class="btn primary" id="btn-result-save">保存名单</button>
+      </div>
+    </div>
+  </div>

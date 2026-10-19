@@ -1,0 +1,51 @@
+/* uncensor 样式 */
+
+.custom-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #141822;
+}
+
+.custom-head label { flex-direction: row; align-items: center; gap: 6px; }
+
+.custom-head select { min-width: 0; width: 92px; }
+
+.custom-head .total { margin-left: auto; }
+
+#panel-uncensor.active { display: flex; flex-direction: column; overflow: hidden; }
+
+#panel-uncensor .card.grow { display: flex; flex-direction: column; min-height: 200px; }
+
+#panel-uncensor .log { flex: 1; min-height: 0; }
+
+#dl-done-file {
+  margin: 0 0 14px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #141822;
+  word-break: break-all;
+}
+
+#panel-uncensor .row .tip-icon { margin-left: auto; position: relative; }
+
+#panel-uncensor .tip-note { text-align: left; }
+
+.custom-head label {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.custom-head label > span,
+
+.custom-head label { flex: 0 0 auto; }
+
+.custom-head .select-wrap { width: 96px; flex: 0 0 auto; }

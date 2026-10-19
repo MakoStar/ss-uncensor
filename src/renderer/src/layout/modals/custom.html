@@ -1,0 +1,31 @@
+<div class="modal-mask" id="custom-modal" hidden>
+    <div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="custom-modal-title">
+      <h3 id="custom-modal-title">自定义下载名单</h3>
+      <div class="modal-note">
+        按 <code>diff_files.json</code> 的格式定义：<code>region</code> 下载哪个区域、
+        <code>platform</code> 哪个平台、<code>files</code> 要哪些文件。
+      </div>
+
+      <div class="custom-head">
+        <label>区域 <select id="custom-region"></select></label>
+        <label>平台 <select id="custom-platform"></select></label>
+        <button class="btn ghost" id="btn-custom-from-list">载入当前选择</button>
+        <span class="total" id="custom-count"></span>
+      </div>
+
+      <div class="row">
+        <input type="search" id="custom-search" placeholder="搜索文件" />
+        <button class="btn ghost" id="btn-custom-add">+ 新增一行</button>
+        <button class="btn ghost" id="btn-custom-clear">清空</button>
+      </div>
+      <div class="edit-list" id="custom-list"></div>
+
+      <p class="modal-error" id="custom-error" hidden></p>
+      <div class="modal-actions">
+        <span class="spacer"></span>
+        <button class="btn ghost" id="btn-custom-cancel">取消</button>
+        <button class="btn ghost" id="btn-custom-save">保存模板</button>
+        <button class="btn primary" id="btn-custom-run">开始下载</button>
+      </div>
+    </div>
+  </div>

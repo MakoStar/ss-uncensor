@@ -1,0 +1,36 @@
+<div class="modal-mask" id="remove-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="remove-modal-title">
+      <h3 id="remove-modal-title">移除反和谐</h3>
+      <p class="modal-note">
+        挑一条替换记录，再用备份包把对应目录的文件还原回去；
+        <strong>有同标签的按包备份会自动预选</strong>，没有就手动挑。留空表示不还原该目录。
+      </p>
+
+      <div class="dest-picker">
+        <div class="scope-label">替换记录</div>
+        <div class="scope-package">
+          <select id="remove-record"></select>
+        </div>
+      </div>
+
+      <div class="restore-row">
+        <span class="path-label">Persistent_Store</span>
+        <select id="remove-persistent"></select>
+      </div>
+      <div class="restore-row">
+        <span class="path-label">InstallResource</span>
+        <select id="remove-install"></select>
+      </div>
+
+      <div class="progress" id="remove-progress" hidden>
+        <div class="progress-bar"><span id="remove-progress-fill"></span></div>
+        <span class="progress-text" id="remove-progress-text">0%</span>
+      </div>
+
+      <div class="modal-actions">
+        <span class="spacer"></span>
+        <button class="btn ghost" id="btn-remove-cancel">取消</button>
+        <button class="btn primary" id="btn-remove-run">开始移除</button>
+      </div>
+    </div>
+  </div>

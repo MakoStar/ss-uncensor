@@ -1,0 +1,39 @@
+<div class="modal-mask" id="replace-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="replace-modal-title">
+      <h3 id="replace-modal-title">替换资源</h3>
+      <p class="modal-note">
+        用反和谐资源包覆盖游戏目录里的对应文件；
+        <strong>替换前建议先「备份资源包」</strong>，方便随时还原。
+      </p>
+
+      <div class="backup-opts">
+        <label class="opt-card">
+          <input type="checkbox" id="replace-persistent" />
+          <span class="opt-text"><b>Persistent_Store</b><i>Persistent_Store/AssetBundles</i></span>
+        </label>
+        <label class="opt-card">
+          <input type="checkbox" id="replace-install" />
+          <span class="opt-text"><b>InstallResource</b><i>xtlr_Data/StreamingAssets/InstallResource</i></span>
+        </label>
+      </div>
+
+      <div class="dest-picker">
+        <div class="scope-label">反和谐资源包</div>
+        <div class="scope-package">
+          <select id="replace-package"></select>
+          <p class="scope-hint" id="replace-package-hint">正在读取资源包…</p>
+        </div>
+      </div>
+
+      <div class="progress" id="replace-progress" hidden>
+        <div class="progress-bar"><span id="replace-progress-fill"></span></div>
+        <span class="progress-text" id="replace-progress-text">0%</span>
+      </div>
+
+      <div class="modal-actions">
+        <span class="spacer"></span>
+        <button class="btn ghost" id="btn-replace-cancel">取消</button>
+        <button class="btn primary" id="btn-replace-run">开始替换</button>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,48 @@
+<section class="panel" id="panel-browse">
+      <div class="card controls">
+        <div class="row">
+          <label>平台 <select id="browse-platform"></select></label>
+          <label>区域 <select id="browse-region"></select></label>
+          <label>来源
+            <select id="browse-source">
+              <option value="patch">补丁清单 patch_manifest</option>
+              <option value="resource">资源清单 resource_manifest</option>
+            </select>
+          </label>
+          <label>排序
+            <select id="browse-order">
+              <option value="FileName">文件名</option>
+              <option value="Version">版本</option>
+              <option value="Hash">哈希</option>
+            </select>
+          </label>
+          <label>方向
+            <select id="browse-dir">
+              <option value="asc">升序</option>
+              <option value="desc">降序</option>
+            </select>
+          </label>
+        </div>
+        <div class="row">
+          <input type="search" id="browse-query" placeholder="搜索文件名，如 char_2d_ / .unity3d" />
+          <button class="btn primary" id="btn-browse">查询</button>
+          <button class="btn ghost" id="btn-open-dir">打开目录</button>
+          <span class="total" id="browse-total"></span>
+        </div>
+      </div>
+
+      <div class="card table-card" id="browse-card">
+        <div class="refresh-bar"></div>
+        <table class="grid" id="browse-table">
+          <thead>
+            <tr><th>#</th><th>文件名</th><th>版本</th><th>哈希</th><th>附加路径</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="pager" id="browse-pager" hidden>
+          <button class="btn" id="btn-prev">上一页</button>
+          <span id="pager-info"></span>
+          <button class="btn" id="btn-next">下一页</button>
+        </div>
+      </div>
+    </section>

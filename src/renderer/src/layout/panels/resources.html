@@ -1,0 +1,42 @@
+<section class="panel" id="panel-resources">
+      <div class="card controls">
+        <div class="row">
+          <div class="actions">
+            <button class="btn ghost" id="btn-res-refresh">刷新</button>
+            <button class="btn ghost" id="btn-res-open-root">打开资源根目录</button>
+          </div>
+          <span class="total" id="res-total"></span>
+        </div>
+        <div class="res-paths">
+          <div><span>资源根目录</span><code id="res-root" title="">—</code></div>
+          <div><span>已下载资源</span><code id="res-files">—</code></div>
+          <div><span>压缩包目录</span><code id="res-pack">—</code></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>已下载资源</h2>
+          <span class="total" id="res-total"></span>
+        </div>
+        <table class="grid" id="res-table">
+          <thead>
+            <tr><th>标签</th><th>平台</th><th>文件数</th><th>占用空间</th><th>目录</th><th>操作</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>已打包</h2>
+          <span class="total" id="res-pack-total"></span>
+        </div>
+        <table class="grid" id="res-pack-table">
+          <thead>
+            <tr><th>压缩包</th><th>大小</th><th>生成时间</th><th>操作</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>

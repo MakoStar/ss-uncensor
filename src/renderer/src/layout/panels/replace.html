@@ -1,0 +1,52 @@
+<section class="panel" id="panel-replace">
+      <div class="card">
+
+        <div class="replace-actions">
+          <button class="btn primary" id="btn-select-game">选择游戏目录</button>
+          <button class="btn ghost" id="btn-save-game-dir">写入配置文件</button>
+          <span class="actions-gap"></span>
+          <button class="btn ghost" id="btn-backup-modal">备份资源包</button>
+          <button class="btn ghost" id="btn-replace-modal">替换资源</button>
+          <button class="btn ghost" id="btn-remove-modal">移除反和谐</button>
+          <button class="btn ghost" id="btn-restore-modal">还原备份</button>
+          <button class="btn ghost" id="btn-view-backups">查看备份</button>
+          <button class="btn ghost" id="btn-launcher-modal">启动测试</button>
+        </div>
+
+        <div class="replace-paths">
+          <div class="path-row">
+            <span class="path-label">GameDirectory</span>
+            <div class="path-line" id="game-dir">（未选择游戏目录）</div>
+            <button class="btn ghost btn-open-dir" data-target="game">查看目录</button>
+          </div>
+          <div class="path-row">
+            <span class="path-label">Persistent_Store</span>
+            <div class="path-line" id="persistent-store-path"></div>
+            <button class="btn ghost btn-open-dir" data-target="persistent">查看目录</button>
+          </div>
+          <div class="path-row">
+            <span class="path-label">InstallResource</span>
+            <div class="path-line" id="install-resource-path"></div>
+            <button class="btn ghost btn-open-dir" data-target="install">查看目录</button>
+          </div>
+          <div class="path-row">
+            <span class="path-label">Launcher</span>
+            <div class="path-line" id="launcher-path"></div>
+            <button class="btn ghost btn-open-dir" data-target="launcher">打开位置</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="backup-card" hidden>
+        <div class="backup-head">
+          <h3>备份列表</h3>
+          <button class="btn ghost" id="btn-backup-refresh">刷新</button>
+        </div>
+        <table class="grid" id="backup-table">
+          <thead>
+            <tr><th>备份文件</th><th>目标</th><th>反和谐包</th><th>大小</th><th>时间</th><th>路径</th><th></th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>

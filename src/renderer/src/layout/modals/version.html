@@ -1,0 +1,21 @@
+<div class="modal-mask" id="version-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="version-modal-title">
+      <h3 id="version-modal-title">抓取器版本</h3>
+      <div class="ver-compare">
+        <div class="ver-box"><b>本地</b><span class="mono" id="ver-local">—</span></div>
+        <div class="ver-arrow">→</div>
+        <div class="ver-box"><b>远程最新</b><span class="mono" id="ver-latest">—</span></div>
+      </div>
+      <p class="modal-note" id="ver-note"></p>
+      <div class="modal-progress" id="ver-progress" hidden>
+        <div class="bar"><i id="ver-bar"></i></div>
+        <span class="mono" id="ver-progress-text">0%</span>
+      </div>
+      <p class="modal-error" id="ver-error" hidden></p>
+      <div class="modal-actions">
+        <button class="btn ghost" id="btn-ver-skip">跳过此版本</button>
+        <button class="btn ghost" id="btn-ver-cancel">取消</button>
+        <button class="btn primary" id="btn-ver-install">重装最新版</button>
+      </div>
+    </div>
+  </div>

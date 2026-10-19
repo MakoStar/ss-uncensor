@@ -1,0 +1,83 @@
+<section class="panel" id="panel-settings">
+      <div class="card">
+        <div class="card-head">
+          <h2>抓取配置</h2>
+          <div>
+            <button class="btn ghost" id="btn-reset-settings">恢复默认</button>
+            <button class="btn primary" id="btn-save-settings">保存并生效</button>
+          </div>
+        </div>
+
+        <div class="grid-form">
+          <label>平台
+            <select id="set-platform"></select>
+          </label>
+
+          <label>抓取器路径（留空 = 自动探测）
+            <input type="text" id="set-fetcher" placeholder="ResourceTool/ResourceFetcher.exe" />
+          </label>
+
+          <label>输出根目录（留空 = &lt;运行目录&gt;/output）
+            <input type="text" id="set-output" placeholder="output" />
+          </label>
+
+          <label>请求超时(秒)
+            <input type="number" id="set-timeout" min="30" step="30" />
+          </label>
+
+          <label>网络重试次数
+            <input type="number" id="set-retries" min="0" max="20" />
+          </label>
+
+          <label>失败自动重跑次数
+            <input type="number" id="set-autoretry" min="0" max="5" />
+          </label>
+
+          <label>日志级别
+            <select id="set-loglevel">
+              <option>off</option><option>error</option><option>warn</option>
+              <option selected>info</option><option>debug</option><option>trace</option>
+            </select>
+          </label>
+
+          <label class="wide">资源白名单（正则，只下载匹配项）
+            <input type="text" id="set-patterns" />
+          </label>
+
+          <label class="check">
+            <input type="checkbox" id="set-useregex" /> 启用资源正则（白名单生效）
+          </label>
+          <label class="check">
+            <input type="checkbox" id="set-filter" /> 过滤已下线的过时补丁
+          </label>
+          <label class="check">
+            <input type="checkbox" id="set-merge" /> 让抓取器合并补丁（默认关）
+          </label>
+          <label class="check">
+            <input type="checkbox" id="set-overwrite" /> 覆盖已下载文件（忽略哈希缓存）
+          </label>
+          <label class="check">
+            <input type="checkbox" id="set-autofetcher" /> 抓取器缺失时提示从 GitHub 自动下载
+          </label>
+        </div>
+
+        <p class="hint">
+          配置保存在 <code id="settings-file"></code>，改完点「保存并生效」立即套用到后续抓取。
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>环境</h2>
+          <div>
+            <button class="btn ghost" id="btn-fetcher-check">检查更新</button>
+            <button class="btn primary" id="btn-fetcher-update" disabled>更新抓取器</button>
+            <button class="btn ghost" id="btn-open-log">打开启动日志</button>
+            <button class="btn danger" id="btn-uninstall">卸载应用</button>
+          </div>
+        </div>
+        <div class="kv" id="env-kv"></div>
+        <div class="hint" id="fetcher-hint"></div>
+        <pre class="command" id="diag-tail"></pre>
+      </div>
+    </section>

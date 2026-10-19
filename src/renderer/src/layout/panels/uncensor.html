@@ -1,0 +1,36 @@
+<section class="panel" id="panel-uncensor">
+      <div class="card controls">
+        <div class="row">
+          <label>下载名单
+            <select id="uncensor-list"></select>
+          </label>
+          <label>超时(秒) <input type="number" id="uncensor-timeout" min="30" step="30" placeholder="900" /></label>
+          <label>重试 <input type="number" id="uncensor-retries" min="0" max="20" placeholder="3" /></label>
+          <label>输出目录
+            <input type="text" id="uncensor-dir" placeholder="output/Uncensor/Resource" />
+          </label>
+          <button class="btn primary" id="btn-uncensor">按选择下载</button>
+          <button class="btn" id="btn-uncensor-official">按官方下载</button>
+          <button class="btn" id="btn-uncensor-run-custom">按自定义下载</button>
+          <button class="btn danger" id="btn-abort-uncensor" hidden>中断</button>
+          <button class="tip-icon" type="button" aria-label="下载说明">?
+            <span class="tip-body">
+              <span class="tip-note">
+                <b>按选择下载</b>：名单来自 <code>output/Generated/diff/</code> 下的 <code>*_diff_files.json</code>，按名单里的平台与区域下载。<br />
+                <b>按官方下载</b>：等价于 <code>ResourceFetcher uncensor -d</code>，拉官方默认资源包，落在 <code>output/Uncensor/Default/&lt;平台&gt;/</code>。<br />
+                <b>按自定义下载</b>：自己填 <code>region</code> / <code>platform</code> / <code>files</code>，也可一键导入当前名单。<br />
+                哈希一致的文件会自动跳过，中断后重跑只补缺的。
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card grow">
+        <div class="card-head">
+          <h2>运行日志</h2>
+          <button class="btn ghost" id="btn-clear-dl-log">清空</button>
+        </div>
+        <div class="log" id="dl-log"></div>
+      </div>
+    </section>

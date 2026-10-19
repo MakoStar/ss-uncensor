@@ -1,0 +1,123 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '版本 tag，如 v0.1.0-alpha.1（留空则用 package.json 里的版本）'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Resolve version
+        id: version
+        shell: bash
+        run: |
+          ref="${{ github.event.inputs.tag }}"
+          if [ -z "$ref" ]; then ref="${{ github.ref_name }}"; fi
+          if [[ "$ref" != v* ]]; then ref="v$(node -p "require('./package.json').version")"; fi
+          echo "tag=$ref" >> "$GITHUB_OUTPUT"
+          echo "version=${ref#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Sync package.json version
+        shell: bash
+        run: |
+          node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json','utf8'));p.version='${{ steps.version.outputs.version }}';fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n')"
+          node -p "'version -> ' + require('./package.json').version"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: |
+          pnpm typecheck:node
+          pnpm typecheck:web
+
+      - name: Self test
+        timeout-minutes: 8
+        run: pnpm selftest
+
+      - name: Build installer
+        run: |
+          pnpm build
+          npx electron-builder --win --config --publish never
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+
+      - name: Package portable zip
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          $src = "release/win-unpacked"
+          if (-not (Test-Path $src)) { throw "win-unpacked 不存在，检查 electron-builder 是否成功" }
+
+          # 套一层同名目录，解压后不会散落在当前目录
+          $stage = "release/stage/ssuncensor"
+          New-Item -ItemType Directory -Path $stage -Force | Out-Null
+          Copy-Item "$src/*" $stage -Recurse -Force
+
+          $out = "release/ssuncensor-$version-win-x64.zip"
+          Compress-Archive -Path $stage -DestinationPath $out -CompressionLevel Optimal
+          Remove-Item "release/stage" -Recurse -Force
+
+          $mb = [math]::Round((Get-Item $out).Length / 1MB, 1)
+          Write-Host "portable: $out ($mb MB)"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: ssuncensor-${{ steps.version.outputs.version }}
+          path: |
+            release/*.exe
+            release/*.blockmap
+            release/*.zip
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ssuncensor ${{ steps.version.outputs.version }}
+          body: |
+            | 文件 | 说明 |
+            | --- | --- |
+            | `ssuncensor-${{ steps.version.outputs.version }}-setup.exe` | 安装版，自带开始菜单/桌面快捷方式与卸载器 |
+            | `ssuncensor-${{ steps.version.outputs.version }}-win-x64.zip` | 免安装版，解压出 `ssuncensor/` 目录，双击里面的 `星塔反和谐工具.exe` 运行 |
+
+            两个包功能相同。配置、日志、`ResourceTool/`、`output/` 都在程序目录里，删掉目录即彻底卸载。
+          generate_release_notes: true
+          prerelease: ${{ contains(steps.version.outputs.version, '-') }}
+          files: |
+            release/*.exe
+            release/*.blockmap
+            release/*.zip
+          fail_on_unmatched_files: false

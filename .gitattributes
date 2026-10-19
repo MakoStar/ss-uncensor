@@ -1,0 +1,9 @@
+* text=auto
+
+.github/workflows/*.yml text eol=lf
+build/*.nsh text eol=lf
+scripts/*.js text eol=lf
+
+*.exe binary
+*.ico binary
+*.png binary

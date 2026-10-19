@@ -1,0 +1,64 @@
+<div class="modal-mask" id="backup-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="backup-modal-title">
+      <h3 id="backup-modal-title">备份资源包</h3>
+      <p class="modal-note">把选中的目录打包成 zip 保存；两个都勾就各生成一份。</p>
+
+      <div class="backup-opts">
+        <label class="opt-card">
+          <input type="checkbox" id="backup-persistent" />
+          <span class="opt-text"><b>Persistent_Store</b><i>Persistent_Store/AssetBundles</i></span>
+        </label>
+        <label class="opt-card">
+          <input type="checkbox" id="backup-install" />
+          <span class="opt-text"><b>InstallResource</b><i>xtlr_Data/StreamingAssets/InstallResource</i></span>
+        </label>
+      </div>
+
+      <div class="dest-picker">
+        <div class="scope-label">备份范围</div>
+        <div class="dest-opts">
+          <label class="opt-card">
+            <input type="radio" name="backup-scope" value="full" checked />
+            <span class="opt-text"><b>完整目录</b><i>整个目录全量备份</i></span>
+          </label>
+          <label class="opt-card">
+            <input type="radio" name="backup-scope" value="package" />
+            <span class="opt-text"><b>按反和谐资源包</b><i>只备该包覆盖的文件</i></span>
+          </label>
+        </div>
+        <div class="scope-package" id="scope-package-row" hidden>
+          <select id="backup-package"></select>
+          <p class="scope-hint" id="backup-package-hint">正在读取资源包…</p>
+        </div>
+      </div>
+
+      <div class="dest-picker">
+        <div class="scope-label">保存位置</div>
+        <div class="dest-opts">
+          <label class="opt-card">
+            <input type="radio" name="backup-dest-mode" value="default" checked />
+            <span class="opt-text"><b>使用默认</b><i>保存到打包资源目录</i></span>
+          </label>
+          <label class="opt-card">
+            <input type="radio" name="backup-dest-mode" value="custom" />
+            <span class="opt-text"><b>自定义位置</b><i>选择一个保存目录</i></span>
+          </label>
+        </div>
+        <div class="dest-custom" id="dest-custom-row" hidden>
+          <input type="text" id="backup-dest" class="path-input" placeholder="尚未选择保存目录" readonly />
+          <button class="btn ghost" id="btn-backup-dest">浏览…</button>
+        </div>
+      </div>
+
+      <div class="progress" id="backup-progress" hidden>
+        <div class="progress-bar"><span id="backup-progress-fill"></span></div>
+        <span class="progress-text" id="backup-progress-text">0%</span>
+      </div>
+
+      <div class="modal-actions">
+        <span class="spacer"></span>
+        <button class="btn ghost" id="btn-backup-cancel">取消</button>
+        <button class="btn primary" id="btn-backup-run">开始备份</button>
+      </div>
+    </div>
+  </div>

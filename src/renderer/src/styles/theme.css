@@ -1,0 +1,36 @@
+/* 主题变量与基础重置 */
+
+:root {
+  --bg: #12151c;
+  --bg-soft: #171b25;
+  --bg-card: #1b202c;
+  --line: #262c3a;
+  --text: #e6e9ef;
+  --text-dim: #8b93a7;
+  --accent: #4f8cff;
+  --accent-2: #2f6ae0;
+  --ok: #3ecf8e;
+  --warn: #f2c14e;
+  --err: #ef6461;
+  --mono: "Cascadia Mono", "JetBrains Mono", Consolas, "Courier New", monospace;
+}
+
+* { box-sizing: border-box; }
+
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.5 "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #333c4d transparent;
+}

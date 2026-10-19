@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+release/
+
+# Runtime output (keep the folder itself)
+output/
+
+# Local config and logs
+.ss-uncensor-gui.json
+uncensor.log
+*.log
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# TypeScript cache
+*.tsbuildinfo
+
+# tests
+tests/

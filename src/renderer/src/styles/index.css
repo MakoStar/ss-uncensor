@@ -1,0 +1,10 @@
+@import './theme.css';
+@import './shell.css';
+@import './components.css';
+@import './fetch.css';
+@import './uncensor.css';
+@import './version.css';
+@import './diff.css';
+@import './resources.css';
+@import './replace.css';
+@import './modals.css';

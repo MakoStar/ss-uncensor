@@ -1,0 +1,23 @@
+<div class="modal-mask" id="fetcher-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="fetcher-modal-title">
+      <h3 id="fetcher-modal-title">需要 ResourceFetcher</h3>
+      <p>
+        没有检测到 <code id="fetcher-modal-path">ResourceTool/ResourceFetcher.exe</code>，暂时无法抓取清单。
+      </p>
+      <p class="modal-reason" id="fetcher-reason" hidden></p>
+      <p class="modal-note">
+        可从 GitHub Releases 自动下载并解压到 <code id="fetcher-modal-dir">ResourceTool/</code>（约 6MB，需要能访问 github.com）。
+        已有旧版本时会先自动备份再替换，中途失败自动回滚。
+      </p>
+      <div class="modal-progress" id="fetcher-progress" hidden>
+        <div class="bar"><i id="fetcher-bar"></i></div>
+        <span class="mono" id="fetcher-progress-text">0%</span>
+      </div>
+      <p class="modal-error" id="fetcher-error" hidden></p>
+      <div class="modal-actions">
+        <button class="btn ghost" id="btn-fetcher-later">稍后</button>
+        <button class="btn ghost" id="btn-fetcher-open">打开发布页</button>
+        <button class="btn primary" id="btn-fetcher-download">自动下载</button>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,33 @@
+<div class="modal-mask" id="restore-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="restore-modal-title">
+      <h3 id="restore-modal-title">还原备份</h3>
+      <p class="modal-note">
+        为每个目录挑一份备份；方括号里是这份备份的范围：
+        <strong>[完整]</strong> 会先清空目标目录再解压，
+        <strong>[反和谐包]</strong> 只覆盖包内的那几个文件，其余文件不动。
+        留空表示不还原该目录。
+      </p>
+
+      <div class="restore-row">
+        <span class="path-label">Persistent_Store</span>
+        <select id="restore-persistent"></select>
+      </div>
+      <div class="restore-row">
+        <span class="path-label">InstallResource</span>
+        <select id="restore-install"></select>
+      </div>
+
+      <p class="modal-error" id="restore-error" hidden></p>
+
+      <div class="progress" id="restore-progress" hidden>
+        <div class="progress-bar"><span id="restore-progress-fill"></span></div>
+        <span class="progress-text" id="restore-progress-text">0%</span>
+      </div>
+
+      <div class="modal-actions">
+        <span class="spacer"></span>
+        <button class="btn ghost" id="btn-restore-cancel">取消</button>
+        <button class="btn primary" id="btn-restore-run">开始还原</button>
+      </div>
+    </div>
+  </div>

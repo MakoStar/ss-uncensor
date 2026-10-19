@@ -1,0 +1,38 @@
+<section class="panel" id="panel-diff">
+      <div class="card controls">
+        <div class="row">
+          <label>平台 <select id="diff-platform"></select></label>
+          <label>基准 <select id="diff-base"></select></label>
+          <label>目标 <select id="diff-target"></select></label>
+          <div class="actions">
+            <button class="btn primary" id="btn-diff">对比差异</button>
+            <button class="btn" id="btn-diff-result">生成结果</button>
+          </div>
+        </div>
+        <div class="hint" id="diff-tip">
+          「对比差异」只预览、不写文件；「生成结果」才会把
+          <code>output/Generated/diff/</code> 下的 JSON 与名单写出来。
+          <span class="dim" id="diff-out"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>差异摘要</h2>
+          <span class="total" id="diff-total"></span>
+        </div>
+        <div class="summary" id="diff-summary">尚未对比</div>
+      </div>
+
+      <div class="card grow" id="diff-files-card" hidden>
+        <div class="card-head">
+          <h2>差异文件</h2>
+          <div class="diff-heads">
+            <span>基准 <b id="diff-base-name">—</b></span>
+            <span class="arrow">→</span>
+            <span>目标 <b id="diff-target-name">—</b></span>
+          </div>
+        </div>
+        <div class="diff-grid" id="diff-files"></div>
+      </div>
+    </section>

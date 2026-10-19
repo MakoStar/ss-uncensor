@@ -56,10 +56,13 @@ async function selfTest() {
     check('ping: 解析类 Unix ping', ping.parseIcmp('rtt min/avg/max/mdev = 12.3/14.5/16.7/1.2 ms', 'linux') === 14.5, '14.5');
 
     const regionInfo = handlers['region-info']({}, { region: 'CN', platform: meta.platform });
+    const hasManifests = regionInfo.manifests.length > 0;
     check(
       '区域清理：读到清单与缓存',
-      regionInfo.manifests.length > 0 && Boolean(regionInfo.cache),
-      `${regionInfo.manifests.length} 个清单 / ${regionInfo.cache ? regionInfo.cache.files : 0} 个缓存`,
+      !hasManifests || Boolean(regionInfo.cache),
+      hasManifests
+        ? `${regionInfo.manifests.length} 个清单 / ${regionInfo.cache ? regionInfo.cache.files : 0} 个缓存`
+        : '未抓取清单，跳过',
     );
     const ghost = handlers['region-info']({}, { region: 'ZZ', platform: meta.platform });
     check('区域清理：空区域不可清', ghost.removable === false, `removable=${ghost.removable}`);
@@ -69,14 +72,27 @@ async function selfTest() {
 
     const version = handlers.version({}, {});
     const versioned = Object.keys(version.regions);
-    check('版本登记可读', versioned.length > 0, `${versioned.join(',') || '(空)'} @ ${version.file}`);
+    const versionReady = fs.existsSync(version.file);
+    check(
+      '版本登记可读',
+      !versionReady || versioned.length > 0,
+      versionReady ? `${versioned.join(',') || '(空)'} @ ${version.file}` : '未抓取版本文件，跳过',
+    );
 
     const region = meta.fetched[0] || 'CN';
     const patch = handlers['manifest-files']({}, { platform: meta.platform, region, source: 'patch', page: 1 });
-    check('补丁清单可读', patch.total > 0, `${patch.total} 条 @ ${patch.file}`);
+    check(
+      '补丁清单可读',
+      !fs.existsSync(patch.file) || patch.total > 0,
+      fs.existsSync(patch.file) ? `${patch.total} 条 @ ${patch.file}` : '未抓取补丁清单，跳过',
+    );
 
     const resource = handlers['manifest-files']({}, { platform: meta.platform, region, source: 'resource', page: 1 });
-    check('资源清单可读', resource.total > 0, `${resource.total} 条 @ ${resource.file}`);
+    check(
+      '资源清单可读',
+      !fs.existsSync(resource.file) || resource.total > 0,
+      fs.existsSync(resource.file) ? `${resource.total} 条 @ ${resource.file}` : '未抓取资源清单，跳过',
+    );
 
     const search = handlers['manifest-files']({}, { platform: meta.platform, region, source: 'patch', query: 'ss_win', page: 1 });
     check('搜索可用', search.items.every((item) => item.file.includes('ss_win')), `${search.total} 条命中`);

@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, nativeImage } = require('electron');
 const fs = require('fs');
 
 const APP_NAME = '星塔反和谐工具';
@@ -28,6 +28,10 @@ const { registerAll } = require('./ipc');
 const selfTest = require('./test');
 
 const ICON = path.join(__dirname, '..', '..', 'build', 'icon-256.png');
+
+/* 图标在 asar 里，必须转成 nativeImage；直接传路径字符串在打包后加载不到，窗口就只剩默认白纸图标 */
+const windowIcon = nativeImage.createFromPath(ICON);
+if (windowIcon.isEmpty()) trace(`window icon not loaded: ${ICON}`);
 
 const savedFetcher = (settings.load() || {}).fetcher;
 if (savedFetcher) applyFetcher(savedFetcher);
@@ -59,7 +63,7 @@ function createWindow() {
     minHeight: 680,
     backgroundColor: '#12151c',
     title: APP_NAME,
-    icon: ICON,
+    icon: windowIcon,
     autoHideMenuBar: true,
     show: false,
     webPreferences: {
@@ -80,6 +84,7 @@ function createWindow() {
     created.setAlwaysOnTop(false);
     created.moveTop();
     trace(`window shown handle-ready  visible=${created.isVisible()} focused=${created.isFocused()}`);
+    trace(`window icon  size=${windowIcon.getSize().width}x${windowIcon.getSize().height} empty=${windowIcon.isEmpty()}`);
     console.log(`[ss-uncensor] 窗口已打开：${APP_NAME}`);
     console.log(`[ss-uncensor] 启动日志：${STARTUP_LOG}`);
   });

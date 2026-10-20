@@ -31,7 +31,9 @@ const ICON = path.join(__dirname, '..', '..', 'build', 'icon-256.png');
 
 const savedFetcher = (settings.load() || {}).fetcher;
 if (savedFetcher) applyFetcher(savedFetcher);
-if (process.platform === 'win32') app.setAppUserModelId(APP_ID);
+
+const installed = fs.existsSync(path.join(path.dirname(app.getPath('exe')), `Uninstall ${APP_NAME}.exe`));
+if (process.platform === 'win32' && app.isPackaged && installed) app.setAppUserModelId(APP_ID);
 
 app.commandLine.appendSwitch('in-process-gpu');
 app.commandLine.appendSwitch('disable-gpu-compositing');

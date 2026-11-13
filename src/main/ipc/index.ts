@@ -1,37 +1,42 @@
-'use strict';
-
 const { ipcMain } = require('electron');
-const { trace } = require('../services/file');
+const { handle } = require('./register');
+const runlog = require('../services/runlog');
 
-const meta = require('./meta');
-const settings = require('./settings');
-const resource = require('./resource');
-const launcher = require('./launcher');
-const fetcher = require('./fetch');
-const uncensor = require('./uncensor');
-const region = require('./region');
+const modules = [
+  require('./meta'),
+  require('./settings'),
+  require('./resource'),
+  require('./launcher'),
+  require('./fetch'),
+  require('./uncensor'),
+  require('./region'),
+  require('./manifest'),
+  require('./background')
+];
 
-/* 汇总所有域的 IPC 处理器 */
-function buildHandlers() {
-  return {
-    ...meta, ...settings, ...resource, ...launcher, ...fetcher, ...uncensor, ...region,
-  };
+/** 接收渲染进程日志并写入 */
+function listenRendererLog(): void {
+  ipcMain.on('log-append', (_event, lines) => {
+    if (!Array.isArray(lines) || !lines.length) return;
+    runlog.pushText(lines.join('\n'), 'APPS');
+  });
 }
 
-/* 向 ipcMain 注册全部处理器并统一捕获异常 */
-function registerAll() {
-  const handlers = buildHandlers();
-  for (const [channel, handler] of Object.entries(handlers) as [string, any][]) {
-    ipcMain.handle(channel, async (event, payload) => {
-      try {
-        return await handler(event, payload);
-      } catch (err) {
-        trace(`ipc ${channel} failed: ${err.message}`);
-        throw err;
-      }
-    });
-  }
-  return handlers;
+/** 注册全部 IPC 通道 */
+function registerAll(): void {
+  for (const mod of modules) mod.register(handle);
+  listenRendererLog();
+}
+
+/** 构建通道到处理函数的映射 */
+function buildHandlers(): Record<string, any> {
+  const map = {};
+
+  const collect = (channel: string, fn: (event: Electron.IpcMainInvokeEvent, payload: any) => any): void => {
+    map[channel] = fn;
+  };
+  for (const mod of modules) mod.register(collect);
+  return map;
 }
 
 module.exports = { registerAll, buildHandlers };

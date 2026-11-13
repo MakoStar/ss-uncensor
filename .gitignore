@@ -1,26 +1,42 @@
-# Dependencies
+# dependencies
 node_modules/
 
-# Build output
+# build output
 dist/
+out/
 release/
+build-out*/
 
-# Runtime output (keep the folder itself)
+# runtime output
 output/
 
-# Local config and logs
-.ss-uncensor-gui.json
+# local settings
+cache/
+config.json
 uncensor.log
+
+# logs
+/log/
 *.log
+!src/main/core/log/
+!src/main/core/log/**
 
-# Editor and OS files
-.vscode/
-.idea/
-.DS_Store
-Thumbs.db
-
-# TypeScript cache
+# typescript cache
 *.tsbuildinfo
 
-# tests
+# test fixtures
 tests/
+
+# fetcher binary
+ResourceTool/
+
+# dtest
+.dtest/
+
+# editor files
+.vscode/
+.idea/
+
+# system files
+.DS_Store
+Thumbs.db

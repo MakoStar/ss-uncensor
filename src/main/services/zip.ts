@@ -1,16 +1,13 @@
-'use strict';
-
 const fs = require('fs');
 const fsp = fs.promises;
 const path = require('path');
 
-/* 预生成 CRC32 查找表 */
 const CRC_TABLE = (() => {
   const base = new Int32Array(256);
   for (let i = 0; i < 256; i += 1) {
-    let c = i;
-    for (let k = 0; k < 8; k += 1) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
-    base[i] = c;
+    let value = i;
+    for (let bit = 0; bit < 8; bit += 1) value = value & 1 ? 0xedb88320 ^ (value >>> 1) : value >>> 1;
+    base[i] = value;
   }
 
   const table = new Int32Array(4 * 256);
@@ -24,30 +21,30 @@ const CRC_TABLE = (() => {
   return table;
 })();
 
-/* 计算缓冲区 CRC32 校验值 */
-function crc32(buffer, seed = 0) {
-  let c = (~seed) >>> 0;
+/** 计算数据的循环冗余校验值 */
+function crc32(buffer: Buffer, seed: number = 0): number {
+  let crc = ~seed >>> 0;
   const len = buffer.length;
   let i = 0;
 
   for (; i + 4 <= len; i += 4) {
-    c = (c ^ (buffer[i] | (buffer[i + 1] << 8) | (buffer[i + 2] << 16) | (buffer[i + 3] << 24))) >>> 0;
-    c = (
-      CRC_TABLE[3 * 256 + (c & 0xff)]
-      ^ CRC_TABLE[2 * 256 + ((c >>> 8) & 0xff)]
-      ^ CRC_TABLE[1 * 256 + ((c >>> 16) & 0xff)]
-      ^ CRC_TABLE[(c >>> 24) & 0xff]
-    ) >>> 0;
+    crc = (crc ^ (buffer[i] | (buffer[i + 1] << 8) | (buffer[i + 2] << 16) | (buffer[i + 3] << 24))) >>> 0;
+    crc =
+      (CRC_TABLE[3 * 256 + (crc & 0xff)] ^
+        CRC_TABLE[2 * 256 + ((crc >>> 8) & 0xff)] ^
+        CRC_TABLE[1 * 256 + ((crc >>> 16) & 0xff)] ^
+        CRC_TABLE[(crc >>> 24) & 0xff]) >>>
+      0;
   }
-  for (; i < len; i += 1) c = (CRC_TABLE[(c ^ buffer[i]) & 0xff] ^ (c >>> 8)) >>> 0;
-
-  return (c ^ 0xffffffff) >>> 0;
+  for (; i < len; i += 1) crc = (CRC_TABLE[(crc ^ buffer[i]) & 0xff] ^ (crc >>> 8)) >>> 0;
+  return (crc ^ 0xffffffff) >>> 0;
 }
 
-/* 递归列出目录内所有文件及包内相对路径 */
-function listFiles(root) {
+/** 递归列出目录下的所有文件 */
+function listFiles(root: string): { full: string; rel: string }[] {
   const out = [];
-  const walk = (dir) => {
+
+  const walk = (dir: string): void => {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) walk(full);
@@ -61,22 +58,23 @@ function listFiles(root) {
 const DOS_TIME = 0;
 const DOS_DATE = 0x21;
 
-const uint64le = (value) => {
+/** 把数值写成八字节小端序 */
+const uint64le = (value: number): Buffer => {
   const buffer = Buffer.allocUnsafe(8);
   buffer.writeUInt32LE(value >>> 0, 0);
   buffer.writeUInt32LE(Math.floor(value / 0x100000000) >>> 0, 4);
   return buffer;
 };
 
-const readUInt64LE = (buf, p) => buf.readUInt32LE(p) + buf.readUInt32LE(p + 4) * 0x100000000;
+/** 从缓冲读出八字节小端整数 */
+const readUInt64LE = (buf: Buffer, p: number): number => buf.readUInt32LE(p) + buf.readUInt32LE(p + 4) * 0x100000000;
 
 const MAX32 = 0xffffffff;
 
-/* 拼装 zip 本地文件头 */
-function localHeader(crc, size, nameBuffer, zip64) {
+/** 拼出压缩包的本地文件头 */
+function localHeader(crc: number, size: number, nameBuffer: Buffer, zip64: boolean): Buffer {
   let extra = null;
   if (zip64) {
-
     extra = Buffer.alloc(20);
     extra.writeUInt16LE(0x0001, 0);
     extra.writeUInt16LE(16, 2);
@@ -96,15 +94,20 @@ function localHeader(crc, size, nameBuffer, zip64) {
   header.writeUInt32LE(zip64 ? MAX32 : size, 22);
   header.writeUInt16LE(nameBuffer.length, 26);
   header.writeUInt16LE(extra ? extra.length : 0, 28);
-
   return extra ? Buffer.concat([header, nameBuffer, extra]) : Buffer.concat([header, nameBuffer]);
 }
 
-/* 拼装 zip 中央目录条目 */
-function centralHeader(nameBuffer, crc, size, offset, zip64Size, zip64Offset) {
+/** 拼出压缩包的中央目录项 */
+function centralHeader(
+  nameBuffer: Buffer,
+  crc: number,
+  size: number,
+  offset: number,
+  zip64Size: boolean,
+  zip64Offset: boolean
+): Buffer {
   let extra = null;
   if (zip64Size || zip64Offset) {
-
     const body = Buffer.concat([uint64le(size), uint64le(size), uint64le(offset)]);
     extra = Buffer.alloc(4 + body.length);
     extra.writeUInt16LE(0x0001, 0);
@@ -126,30 +129,48 @@ function centralHeader(nameBuffer, crc, size, offset, zip64Size, zip64Offset) {
   header.writeUInt16LE(nameBuffer.length, 28);
   header.writeUInt16LE(extra ? extra.length : 0, 30);
   header.writeUInt32LE(zip64Offset ? MAX32 : offset, 42);
-
   return extra ? Buffer.concat([header, nameBuffer, extra]) : Buffer.concat([header, nameBuffer]);
 }
 
-/* 往文件句柄写一段数据 */
-function write(handle, buffer) {
-  return handle.write(buffer).then((result) => (result.bytesWritten < buffer.length ? new Promise((resolve) => handle.once('drain', resolve)) : null));
+/** 写入缓冲并在背压时等待 */
+function write(handle: import('fs').promises.FileHandle & NodeJS.EventEmitter, buffer: Buffer): Promise<unknown> {
+  return handle
+    .write(buffer)
+    .then((result) =>
+      result.bytesWritten < buffer.length ? new Promise((resolve) => handle.once('drain', resolve)) : null
+    );
 }
 
-const uint32le = (value) => {
+/** 把数值写成四字节小端序 */
+const uint32le = (value: number): Buffer => {
   const buffer = Buffer.allocUnsafe(4);
   buffer.writeUInt32LE(value >>> 0, 0);
   return buffer;
 };
 
-/* 构造可被识别的中断错误 */
-function abortedError() {
+/** 构造打包中断的错误对象 */
+function abortedError(): Error {
   const err: any = new Error('打包已中断');
   err.code = 'ZIP_ABORTED';
   return err;
 }
 
-/* 把指定文件列表打成 zip 并回报进度 */
-async function packFiles(files, outFile, { onProgress = (() => {}) as any, chunkSize = 8 << 20, forceZip64 = false, isCancelled = (() => false) as any } = {}) {
+/** 把文件列表打包成压缩包 */
+async function packFiles(
+  files: Array<{ full: string; rel: string }>,
+  outFile: string,
+  {
+    onProgress = (() => {}) as any,
+    chunkSize = 8 << 20,
+    forceZip64 = false,
+    isCancelled = (() => false) as any
+  }: {
+    onProgress?: (written: number) => void;
+    chunkSize?: number;
+    forceZip64?: boolean;
+    isCancelled?: () => boolean;
+  } = {}
+): Promise<{ file: string; bytes: number; files: number }> {
   const fd = await fsp.open(outFile, 'w');
   const entries = [];
   let offset = 0;
@@ -186,15 +207,12 @@ async function packFiles(files, outFile, { onProgress = (() => {}) as any, chunk
         written += slice.length;
         onProgress(written);
       }
-
       fs.writeSync(fd.fd, uint32le(crc), 0, 4, localOffset + 14);
       entries.push({ nameBuffer, crc, size, localOffset });
     }
 
     const total = offset;
-    const anyZip64 = forceZip64
-      || total >= MAX32
-      || entries.some((e) => e.localOffset >= MAX32 || e.size >= MAX32);
+    const anyZip64 = forceZip64 || total >= MAX32 || entries.some((e) => e.localOffset >= MAX32 || e.size >= MAX32);
 
     const centralStart = offset;
     for (const entry of entries) {
@@ -207,7 +225,6 @@ async function packFiles(files, outFile, { onProgress = (() => {}) as any, chunk
     const centralSize = offset - centralStart;
 
     if (anyZip64) {
-
       const z64 = Buffer.alloc(56);
       z64.writeUInt32LE(0x06064b50, 0);
       uint64le(44).copy(z64, 4);
@@ -242,17 +259,25 @@ async function packFiles(files, outFile, { onProgress = (() => {}) as any, chunk
   } finally {
     await fd.close();
   }
-
   return { file: outFile, bytes: offset, files: entries.length };
 }
 
-/* 把整个目录打成 zip */
-function zipDir(dir, outFile, options = {}) {
+/** 把整个目录打包成压缩包 */
+function zipDir(
+  dir: string,
+  outFile: string,
+  options: {
+    onProgress?: (written: number) => void;
+    chunkSize?: number;
+    forceZip64?: boolean;
+    isCancelled?: () => boolean;
+  } = {}
+): Promise<{ file: string; bytes: number; files: number }> {
   return packFiles(listFiles(dir), outFile, options);
 }
 
-/* 读取 zip 中央目录返回条目清单 */
-async function listZip(file) {
+/** 读出压缩包内的条目列表 */
+async function listZip(file: string): Promise<{ name: string; size: number }[]> {
   const fd = await fsp.open(file, 'r');
   try {
     const total = (await fd.stat()).size;
@@ -299,7 +324,6 @@ async function listZip(file) {
       const commentLength = central.readUInt16LE(cursor + 32);
       const name = central.toString('utf8', cursor + 46, cursor + 46 + nameLength);
       if (size === MAX32) {
-
         const exStart = cursor + 46 + nameLength;
         if (central.readUInt16LE(exStart) === 0x0001) size = readUInt64LE(central, exStart + 4);
       }
@@ -312,8 +336,8 @@ async function listZip(file) {
   }
 }
 
-/* 解析 zip 结构并逐条校验 CRC */
-function verifyZip(file) {
+/** 校验压缩包条目与校验值 */
+function verifyZip(file: string): { entries: number } {
   const buf = fs.readFileSync(file);
 
   let eocd = -1;
@@ -349,18 +373,27 @@ function verifyZip(file) {
     const dataStart = localOffset + 30 + localNameLength + buf.readUInt16LE(localOffset + 28);
     const data = buf.subarray(dataStart, dataStart + compressedSize);
     if (crc32(data) !== crc) throw new Error(`${name} CRC 不匹配`);
-
     cursor += 46 + nameLength + extraLength + commentLength;
   }
-
   return { entries: total };
 }
 
-/* 把 zip 解压到目标目录并回报进度 */
-async function unzipTo(file, destDir, { onProgress = (() => {}) as any, chunkSize = 8 << 20, pick = null } = {}) {
+/** 把压缩包解压到目标目录 */
+async function unzipTo(
+  file: string,
+  destDir: string,
+  {
+    onProgress = (() => {}) as any,
+    chunkSize = 8 << 20,
+    pick = null
+  }: {
+    onProgress?: (done: number, total: number) => void;
+    chunkSize?: number;
+    pick?: ((name: string) => { dest: string; rel?: string } | null) | null;
+  } = {}
+): Promise<{ file: string; destDir: string; entries: number; bytes: number }> {
   const fd = await fsp.open(file, 'r');
   try {
-
     if (typeof fd.setMaxListeners === 'function') fd.setMaxListeners(0);
 
     const total = (await fd.stat()).size;
@@ -418,16 +451,16 @@ async function unzipTo(file, destDir, { onProgress = (() => {}) as any, chunkSiz
       if (compressedSize === MAX32 || localOffset === MAX32) {
         const exStart = cursor + 46 + nameLength;
         const exEnd = exStart + extraLength;
-        let p = exStart;
-        while (p + 4 <= exEnd) {
-          const id = central.readUInt16LE(p);
-          const sz = central.readUInt16LE(p + 2);
+        let position = exStart;
+        while (position + 4 <= exEnd) {
+          const id = central.readUInt16LE(position);
+          const size = central.readUInt16LE(position + 2);
           if (id === 0x0001) {
-            const body = p + 4;
+            const body = position + 4;
             if (compressedSize === MAX32) compressedSize = readUInt64LE(central, body + 8);
             if (localOffset === MAX32) localOffset = readUInt64LE(central, body + 16);
           }
-          p += 4 + sz;
+          position += 4 + size;
         }
       }
       cursor += 46 + nameLength + extraLength + commentLength;
@@ -470,15 +503,13 @@ async function unzipTo(file, destDir, { onProgress = (() => {}) as any, chunkSiz
         start: dataStart,
         end: dataStart + compressedSize - 1,
         highWaterMark: chunkSize,
-
-        autoClose: false,
+        autoClose: false
       });
       const ws = fs.createWriteStream(target, { flags: 'w' });
       await new Promise((resolve, reject) => {
         rs.on('data', (chunk) => {
           crcRun = crc32(chunk, crcRun);
           size += chunk.length;
-
           onProgress(done + size, zipTotal);
         });
         rs.on('error', reject);

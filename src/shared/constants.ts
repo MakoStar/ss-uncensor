@@ -1,6 +1,6 @@
-export const APP_NAME = '星塔反和谐工具'
+export const APP_NAME = '星塔反和谐工具';
 
-export const APP_ID = 'com.makostar.ssuncensor'
+export const APP_ID = 'com.makostar.ssuncensor';
 
 export const CHANNELS = {
   meta: 'meta',
@@ -8,8 +8,12 @@ export const CHANNELS = {
   baseName: 'base-name',
   diag: 'diag',
   saveSettings: 'save-settings',
+  configText: 'config-text',
+  configWrite: 'config-write',
   resetSettings: 'reset-settings',
+  configChanged: 'config:changed',
   selectDirectory: 'select-directory',
+  selectFile: 'select-file',
   saveGameDir: 'save-game-dir',
   detectGamePaths: 'detect-game-paths',
   backupPackages: 'backup-packages',
@@ -21,6 +25,8 @@ export const CHANNELS = {
   restoreBackup: 'restore-backup',
   replaceResource: 'replace-resource',
   listReplaces: 'list-replaces',
+  clearReplaces: 'clear-replaces',
+  saveReplaces: 'save-replaces',
   removeReplace: 'remove-replace',
   abortReplace: 'abort-replace',
   resourceSummary: 'resource-summary',
@@ -35,6 +41,7 @@ export const CHANNELS = {
   launchGame: 'launch-game',
   installFetcher: 'install-fetcher',
   fetcherVersion: 'fetcher-version',
+  cancelFetcher: 'cancel-fetcher',
   fetchCommand: 'fetch-command',
   fetch: 'fetch',
   ping: 'ping',
@@ -42,8 +49,13 @@ export const CHANNELS = {
   diffLists: 'diff-lists',
   writeCustomList: 'write-custom-list',
   uncensor: 'uncensor',
+  uncensorPreview: 'uncensor-preview',
+  syncScan: 'sync-scan',
+  syncClean: 'sync-clean',
   diff: 'diff',
   diffResult: 'diff-result',
+  deleteDiffResult: 'delete-diff-result',
+  clearDiffResult: 'clear-diff-result',
   readJson: 'read-json',
   writeJson: 'write-json',
   saveDiffList: 'save-diff-list',
@@ -51,5 +63,5 @@ export const CHANNELS = {
   regionInfo: 'region-info',
   clearRegion: 'clear-region',
   openUrl: 'open-url',
-  formatLog: 'format-log',
-} as const
+  formatLog: 'format-log'
+} as const;

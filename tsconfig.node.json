@@ -5,7 +5,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "moduleDetection": "force",
-    "types": ["node"],
+    "types": ["node", "electron"],
     "strict": false,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -13,9 +13,9 @@
     "isolatedModules": true,
     "noEmit": true,
     "paths": {
-      "@core/*": ["./src/core/*"],
+      "@core/*": ["./src/main/core/*"],
       "@shared/*": ["./src/shared/*"]
     }
   },
-  "include": ["src/main", "src/preload", "src/core", "src/shared", "electron.vite.config.ts"]
+  "include": ["src/main", "src/preload", "src/shared", "electron.vite.config.ts"]
 }

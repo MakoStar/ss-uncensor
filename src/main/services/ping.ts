@@ -1,17 +1,15 @@
-'use strict';
-
 const dns = require('dns');
 const { spawn, spawnSync } = require('child_process');
 const { net } = require('electron');
 
-const { fetcher } = require('../../core/config/paths');
-const { SERVER_REGIONS } = require('../../core/config');
+const { fetcher } = require('../core/config/paths');
+const { SERVER_REGIONS } = require('../core/config');
 
 const ICMP_TIMEOUT = 6000;
 const HTTP_TIMEOUT = 8000;
 
-/* 返回五个区域的测试地址表 */
-function serverUrls() {
+/** 读取工具输出的各服地址 */
+function serverUrls(): Record<string, string> {
   const exe = fetcher();
   if (!exe) return {};
 
@@ -24,10 +22,9 @@ function serverUrls() {
   return map;
 }
 
-/* 从 ping 输出里解析平均延迟 */
-function parseIcmp(text, platformName = process.platform) {
+/** 从命令输出里解析延迟毫秒 */
+function parseIcmp(text: string, platformName: string = process.platform): number | null {
   if (platformName === 'win32') {
-
     const values = [...String(text).matchAll(/=\s*(\d+)\s*ms/g)].map((hit) => Number(hit[1]));
     return values.length ? values[values.length - 1] : null;
   }
@@ -35,12 +32,10 @@ function parseIcmp(text, platformName = process.platform) {
   return hit ? Number(hit[2]) : null;
 }
 
-/* 执行一次 ICMP ping 取平均延迟 */
-function icmpPing(host) {
+/** 对主机执行两次延迟探测 */
+function icmpPing(host: string): Promise<number | null> {
   return new Promise((resolve) => {
-    const args = process.platform === 'win32'
-      ? ['-n', '2', '-w', '2000', host]
-      : ['-c', '2', '-W', '2', host];
+    const args = process.platform === 'win32' ? ['-n', '2', '-w', '2000', host] : ['-c', '2', '-W', '2', host];
 
     let child;
     try {
@@ -51,25 +46,29 @@ function icmpPing(host) {
     }
 
     let buffer = Buffer.alloc(0);
-    const finish = (value) => {
+
+    const finish = (value: number | null): void => {
       clearTimeout(timer);
-      try { child.kill(); } catch (err) {  }
+      try {
+        child.kill();
+      } catch (err) {}
       resolve(value);
     };
     const timer = setTimeout(() => finish(null), ICMP_TIMEOUT);
 
-    child.stdout.on('data', (chunk) => { buffer = Buffer.concat([buffer, chunk]); });
+    child.stdout.on('data', (chunk) => {
+      buffer = Buffer.concat([buffer, chunk]);
+    });
     child.stderr.on('data', () => {});
     child.on('error', () => finish(null));
     child.on('close', () => {
-
       finish(parseIcmp(buffer.toString('latin1')));
     });
   });
 }
 
-/* 测量域名解析耗时 */
-async function dnsTime(host) {
+/** 测量域名解析耗时 */
+async function dnsTime(host: string): Promise<number | null> {
   const started = Date.now();
   try {
     await dns.promises.lookup(host);
@@ -79,13 +78,19 @@ async function dnsTime(host) {
   }
 }
 
-/* 向地址发 HEAD 请求取状态码与耗时 */
-function httpHead(url) {
+/** 发起探测请求并记录响应 */
+function httpHead(url: string): Promise<{
+  ok: boolean;
+  status?: number;
+  ttfb?: number;
+  size?: number;
+  error?: string;
+}> {
   return new Promise((resolve) => {
     const started = Date.now();
     let settled = false;
 
-    const finish = (value) => {
+    const finish = (value: { ok: boolean; status?: number; ttfb?: number; size?: number; error?: string }): void => {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
@@ -96,7 +101,9 @@ function httpHead(url) {
     request.setHeader('User-Agent', 'ss-uncensor-gui');
 
     const timer = setTimeout(() => {
-      try { request.abort(); } catch (err) {  }
+      try {
+        request.abort();
+      } catch (err) {}
       finish({ ok: false, error: '超时' });
     }, HTTP_TIMEOUT);
 
@@ -106,28 +113,30 @@ function httpHead(url) {
       const size = Number(response.headers['content-length'] || 0);
 
       response.on('data', () => {});
-      response.on('end', () => finish({
-        ok: status >= 200 && status < 400,
-        status,
-        ttfb,
-        size,
-      }));
+      response.on('end', () =>
+        finish({
+          ok: status >= 200 && status < 400,
+          status,
+          ttfb,
+          size
+        })
+      );
       response.on('error', (err) => finish({ ok: false, error: err.message }));
     });
-
     request.on('error', (err) => finish({ ok: false, error: err.message }));
     request.end();
   });
 }
 
-/* 等待指定毫秒数 */
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+/** 等待指定毫秒后继续 */
+const delay = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
-/* 发 Range 请求测首包耗时与带宽 */
-function rangeSize(url) {
+/** 用范围请求探测文件大小 */
+function rangeSize(url: string): Promise<number> {
   return new Promise((resolve) => {
     let settled = false;
-    const finish = (value) => {
+
+    const finish = (value: number): void => {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
@@ -139,14 +148,22 @@ function rangeSize(url) {
     request.setHeader('Range', 'bytes=0-0');
 
     const timer = setTimeout(() => {
-      try { request.abort(); } catch (err) {  }
+      try {
+        request.abort();
+      } catch (err) {}
       finish(0);
     }, 5000);
 
     request.on('response', (response) => {
-      const total = Number(String(response.headers['content-range'] || '').split('/').pop());
+      const total = Number(
+        String(response.headers['content-range'] || '')
+          .split('/')
+          .pop()
+      );
       const size = Number.isFinite(total) && total > 0 ? total : Number(response.headers['content-length'] || 0);
-      try { request.abort(); } catch (err) {  }
+      try {
+        request.abort();
+      } catch (err) {}
       finish(Number.isFinite(size) ? size : 0);
     });
     request.on('error', () => finish(0));
@@ -154,23 +171,37 @@ function rangeSize(url) {
   });
 }
 
-/* 对一个区域跑完延迟解析与下载三项探测 */
-async function probeRegion(region, url, platform) {
+/** 测一个区服的延迟与可用性 */
+async function probeRegion(
+  region: string,
+  url: string,
+  platform: string,
+  shouldStop?: () => boolean
+): Promise<Record<string, any> | null> {
   const host = (() => {
-    try { return new URL(url).host; } catch (err) { return url; }
+    try {
+      return new URL(url).host;
+    } catch (err) {
+      return url;
+    }
   })();
   const target = `${url.replace(/\/$/, '')}/meta/${platform}.html`;
 
+  const stopped = (): boolean => Boolean(shouldStop && shouldStop());
+
   const [icmp, dnsMs, first] = await Promise.all([icmpPing(host), dnsTime(host), httpHead(target)]);
+  if (stopped()) return null;
 
   let http: any = first;
   if (!http.ok && (http.status === 403 || http.status === 429 || (http.status || 0) >= 500)) {
     await delay(900);
+    if (stopped()) return null;
     http = await httpHead(target);
     if (!http.ok && http.status) http.note = '可能被限流';
   }
 
   if (http.ok && !http.size) http.size = await rangeSize(target);
+  if (stopped()) return null;
 
   return {
     region,
@@ -180,12 +211,14 @@ async function probeRegion(region, url, platform) {
     icmp,
     dns: dnsMs,
     http,
-    ok: Boolean(http && http.ok),
+    ok: Boolean(http && http.ok)
   };
 }
 
-/* 并发测试所有区域连通性并汇总结果 */
-async function testConnectivity({ platform, regions }: any = {}) {
+/** 依次探测各服并汇总结果 */
+async function testConnectivity({ platform, regions }: { platform?: string; regions?: string[] } = {}): Promise<
+  Record<string, any>
+> {
   const urls = serverUrls();
   const wanted = (regions && regions.length ? regions : SERVER_REGIONS).filter((region) => urls[region]);
 
@@ -196,7 +229,7 @@ async function testConnectivity({ platform, regions }: any = {}) {
 
   return {
     results,
-    summary: { total: results.length, ok: results.filter((item) => item.ok).length },
+    summary: { total: results.length, ok: results.filter((item) => item.ok).length }
   };
 }
 

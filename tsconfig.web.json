@@ -11,7 +11,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "paths": {
-      "@shared/*": ["./src/shared/*"]
+      "@shared/*": ["./src/shared/*"],
+      "@/*": ["./src/renderer/src/*"]
     }
   },
   "include": ["src/renderer", "src/shared"]

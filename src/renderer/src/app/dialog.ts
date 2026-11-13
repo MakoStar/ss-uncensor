@@ -1,35 +1,31 @@
-import { $ } from '../utils/dom'
+import { pinia } from '../stores/pinia';
+import { useDialogStore } from '../stores/dialog';
 
-/* 弹出错误提示框 */
-export function showError(title, text) {
-  $('error-title').textContent = title;
-  $('error-text').textContent = text;
-  $('error-modal').hidden = false;
+/** 打开错误提示弹窗 */
+export function showError(
+  title: string,
+  text: string,
+  detail?: { label: string; value: string },
+  showLog = false
+): void {
+  useDialogStore(pinia).showError(title, text, detail, showLog);
 }
 
-$('btn-error-ok').addEventListener('click', () => { $('error-modal').hidden = true; });
-$('error-modal').addEventListener('click', (event) => {
-  if (event.target === $('error-modal')) $('error-modal').hidden = true;
-});
+/** 打开确认弹窗等待用户选择 */
+export function askConfirm(
+  title: string,
+  text: string,
+  okLabel = '确认删除',
+  tone: 'danger' | 'primary' = 'danger'
+): Promise<boolean> {
+  return useDialogStore(pinia).askConfirm(title, text, okLabel, tone);
+}
 
-/* 弹出二次确认框并返回用户选择 */
-export function askConfirm(title, text, okLabel = '确认删除') {
-  return new Promise((resolve) => {
-    $('confirm-modal-title').textContent = title;
-    $('confirm-text').textContent = text;
-    $('btn-confirm-ok').textContent = okLabel;
-
-    const done = (value) => {
-      $('confirm-modal').hidden = true;
-      $('btn-confirm-ok').removeEventListener('click', onOk);
-      $('btn-confirm-cancel').removeEventListener('click', onCancel);
-      resolve(value);
-    };
-    const onOk = () => done(true);
-    const onCancel = () => done(false);
-
-    $('btn-confirm-ok').addEventListener('click', onOk);
-    $('btn-confirm-cancel').addEventListener('click', onCancel);
-    $('confirm-modal').hidden = false;
-  });
+/** 打开选项弹窗等待用户选择 */
+export function askChoice(
+  title: string,
+  text: string,
+  options: Array<{ value: string; label: string; primary?: boolean }>
+): Promise<string> {
+  return useDialogStore(pinia).askChoice(title, text, options);
 }

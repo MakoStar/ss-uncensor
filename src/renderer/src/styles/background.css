@@ -1,0 +1,227 @@
+#bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  opacity: 0;
+  filter: none;
+  transition: opacity 0.5s ease;
+}
+
+#bg-layer[data-ready] {
+  opacity: 1;
+}
+
+body.switching #bg-layer {
+  animation: bg-veil-dip 440ms ease-in-out;
+}
+
+.topbar,
+#panels,
+#modals {
+  position: relative;
+  z-index: 1;
+}
+
+.card {
+  background: rgb(23 27 37 / 0.66);
+  border-color: rgb(255 255 255 / 0.1);
+  backdrop-filter: blur(8px) saturate(1.1);
+}
+
+.card.controls {
+  position: relative;
+  z-index: 2;
+}
+
+.btn,
+.chip,
+.card select,
+.card input[type="text"],
+.card input[type="number"],
+.card textarea {
+  background: rgb(30 37 50 / 0.55);
+  border-color: rgb(255 255 255 / 0.16);
+}
+
+.card select { color-scheme: dark; }
+
+.card select:hover,
+.select-wrap:hover select.platform-select,
+.btn:not(.primary):not(.danger):hover,
+.chip:not(.on):hover {
+  background: rgb(38 47 64 / 0.7);
+  border-color: rgb(140 175 235 / 0.5);
+}
+
+.btn.busy,
+.btn.ghost.busy,
+.btn.ghost.busy:hover {
+  background: rgb(242 193 78 / 0.16);
+  border-color: rgb(242 193 78 / 0.55);
+  color: var(--warn);
+}
+
+select:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+  border-color: rgb(255 255 255 / 0.26);
+  box-shadow: none;
+  outline: none;
+}
+
+.btn.ghost {
+  background: rgb(30 37 50 / 0.42);
+  color: var(--text);
+}
+
+.topbar {
+  background: rgb(18 21 28 / 0.6);
+  border-bottom-color: rgb(255 255 255 / 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.log {
+  background: rgb(14 17 23 / 0.3);
+}
+
+.modal-mask {
+  background: rgb(6 8 12 / 0.45);
+  backdrop-filter: blur(6px);
+}
+
+.modal {
+  background: rgb(23 27 37 / 0.94);
+  backdrop-filter: blur(20px) saturate(1.1);
+}
+
+.log div, .log span {
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.85);
+}
+
+#bg-anim {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+
+  background:
+    radial-gradient(140% 90% at 50% -20%, #1e1a33 0%, transparent 62%),
+    radial-gradient(100% 70% at 50% 115%, #131a2e 0%, transparent 60%),
+    linear-gradient(170deg, #14121f 0%, #0f1018 52%, #0b0c12 100%);
+  filter: blur(0px);
+}
+
+body.switching #bg-anim {
+  animation: bg-veil-dip 440ms ease-in-out;
+}
+
+@keyframes bg-veil-dip {
+  0%   { filter: brightness(0.38) blur(18px); }
+  48%  { filter: brightness(0.38) blur(18px); }
+  82%  { filter: brightness(1) blur(18px); }
+  100% { filter: brightness(1) blur(0px); }
+}
+
+#bg-anim .nebula {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  will-change: transform;
+  pointer-events: none;
+}
+
+#bg-anim.on .nebula {
+  opacity: 1;
+  animation: nebula-drift 34s ease-in-out infinite;
+}
+
+#bg-anim .n1 {
+  width: 74vmax;
+  height: 74vmax;
+  left: -16vmax;
+  top: -22vmax;
+  background: radial-gradient(circle at center,
+    rgb(99 156 255 / 0.3) 0%,
+    rgb(99 156 255 / 0.14) 32%,
+    rgb(99 156 255 / 0.05) 55%,
+    transparent 72%);
+}
+
+#bg-anim .n2 {
+  width: 62vmax;
+  height: 62vmax;
+  right: -14vmax;
+  top: -10vmax;
+  background: radial-gradient(circle at center,
+    rgb(151 118 255 / 0.26) 0%,
+    rgb(151 118 255 / 0.12) 32%,
+    rgb(151 118 255 / 0.04) 56%,
+    transparent 72%);
+  animation-delay: -11s;
+}
+
+#bg-anim .n3 {
+  width: 54vmax;
+  height: 54vmax;
+  right: 6%;
+  bottom: -24vmax;
+  background: radial-gradient(circle at center,
+    rgb(214 226 255 / 0.2) 0%,
+    rgb(190 210 255 / 0.09) 34%,
+    rgb(160 190 255 / 0.03) 58%,
+    transparent 74%);
+  animation-delay: -22s;
+}
+
+@keyframes nebula-drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  30%  { transform: translate(7vmax, 5vmax) scale(1.1); }
+  62%  { transform: translate(-5vmax, 9vmax) scale(0.95); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+#bg-anim .stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+#bg-anim.on .stars { opacity: 1; }
+
+#bg-anim .stars i {
+  position: absolute;
+  width: var(--s, 1.4px);
+  height: var(--s, 1.4px);
+  border-radius: 50%;
+  background: #dfe6ff;
+  box-shadow: 0 0 3px 1px rgb(190 210 255 / 0.45);
+  animation: star-twinkle var(--dur, 6s) ease-in-out infinite;
+  animation-delay: var(--dl, 0s);
+}
+
+#bg-anim .stars i:nth-child(3n)   { --dur: 5.5s; --dl: -1.7s; }
+#bg-anim .stars i:nth-child(3n+1) { --dur: 7.2s; --dl: -3.4s; }
+#bg-anim .stars i:nth-child(4n)   { --dur: 8.6s; --dl: -5.1s; }
+#bg-anim .stars i:nth-child(5n)   { --dur: 6.4s; --dl: -2.3s; }
+#bg-anim .stars i:nth-child(7n)   { --dur: 9.3s; --dl: -6.8s; }
+
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.28; }
+  50%      { opacity: 0.95; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #bg-anim.on .nebula { animation: none; }
+  #bg-anim .stars i { animation: none; opacity: 0.6; }
+  body.switching #bg-layer,
+  body.switching #bg-anim { animation: none; }
+}

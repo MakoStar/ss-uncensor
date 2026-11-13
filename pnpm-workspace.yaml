@@ -1,0 +1,5 @@
+allowBuilds:
+  '@swc/core': true
+  electron-winstaller: true
+minimumReleaseAgeExclude:
+  - electron@45.3.2

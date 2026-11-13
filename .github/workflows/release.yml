@@ -89,6 +89,9 @@ jobs:
           Copy-Item "$src/*" $stage -Recurse -Force
 
           $out = "release/ssuncensor-$version-win-x64.zip"
+          if (Test-Path $out) {
+              Remove-Item $out -Force
+          }
           Compress-Archive -Path $stage -DestinationPath $out -CompressionLevel Optimal
           Remove-Item "release/stage" -Recurse -Force
 

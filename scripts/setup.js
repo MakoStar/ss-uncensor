@@ -1,12 +1,16 @@
-'use strict';
-
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
 const root = path.join(__dirname, '..');
 const installer = path.join(root, 'node_modules', 'electron', 'install.js');
-const binary = path.join(root, 'node_modules', 'electron', 'dist', process.platform === 'win32' ? 'electron.exe' : 'electron');
+const binary = path.join(
+  root,
+  'node_modules',
+  'electron',
+  'dist',
+  process.platform === 'win32' ? 'electron.exe' : 'electron'
+);
 
 if (process.env.ELECTRON_SKIP_BINARY_DOWNLOAD) {
   console.log('[electron] 已要求跳过二进制下载');

@@ -1,25 +1,19 @@
-'use strict';
-
-/**
- * 启动器：`node scripts/dev.js [dev|start|selftest|pipeline]`
- *
- * dev       走 electron-vite dev（渲染层热更新）
- * start     先 electron-vite build，再跑构建产物
- * selftest  构建后跑无界面自检，按 JSON 里的 ok 判定成败
- * pipeline  构建后跑无界面完整流水线
- */
-
 const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
 delete process.env.ELECTRON_RUN_AS_NODE;
 
-/* 开发时用 tests/fixtures 里的备份抓取器 */
-const fixture = path.join(__dirname, '..', 'tests', 'fixtures', 'fetcher', process.platform === 'win32' ? 'ResourceFetcher.exe' : 'ResourceFetcher');
+const fixture = path.join(
+  __dirname,
+  '..',
+  'tests',
+  'fixtures',
+  'fetcher',
+  process.platform === 'win32' ? 'ResourceFetcher.exe' : 'ResourceFetcher'
+);
 if (!process.env.RESOURCE_FETCHER && fs.existsSync(fixture)) process.env.RESOURCE_FETCHER = fixture;
 
-/* node 环境下 require electron 拿到的是二进制路径 */
 const exe = require('electron');
 const appDir = path.join(__dirname, '..');
 const mode = process.argv[2] || 'start';
@@ -45,12 +39,23 @@ if (!fs.existsSync(exe)) {
   console.log('[electron] 二进制就绪，启动中…');
 }
 
-const localBin = path.join(appDir, 'node_modules', '.bin', process.platform === 'win32' ? 'electron-vite.cmd' : 'electron-vite');
+const localBin = path.join(
+  appDir,
+  'node_modules',
+  '.bin',
+  process.platform === 'win32' ? 'electron-vite.cmd' : 'electron-vite'
+);
 const viteBin = fs.existsSync(localBin) ? localBin : 'electron-vite';
 
+/** 调用构建工具打包应用 */
 function build() {
   console.log('[build] electron-vite build …');
-  const result = spawnSync(viteBin, ['build'], { stdio: 'inherit', cwd: appDir, windowsHide: true, shell: process.platform === 'win32' });
+  const result = spawnSync(viteBin, ['build'], {
+    stdio: 'inherit',
+    cwd: appDir,
+    windowsHide: true,
+    shell: process.platform === 'win32'
+  });
   if (result.error || result.status !== 0) {
     console.log('[build] 构建失败');
     process.exit(1);
@@ -58,7 +63,12 @@ function build() {
 }
 
 if (mode === 'dev') {
-  const result = spawnSync(viteBin, ['dev'], { stdio: 'inherit', cwd: appDir, windowsHide: true, shell: process.platform === 'win32' });
+  const result = spawnSync(viteBin, ['dev'], {
+    stdio: 'inherit',
+    cwd: appDir,
+    windowsHide: true,
+    shell: process.platform === 'win32'
+  });
   process.exit(result.status === null ? 1 : result.status);
 }
 
@@ -70,7 +80,10 @@ const flag = mode === 'selftest' ? '--self-test' : mode === 'pipeline' ? '--pipe
 if (!headless) {
   console.log(`[electron] 启动：${exe}`);
   const started = Date.now();
-  const result = spawnSync(exe, [appDir, ...(flag ? [flag] : []), ...passThrough], { stdio: 'inherit', windowsHide: true });
+  const result = spawnSync(exe, [appDir, ...(flag ? [flag] : []), ...passThrough], {
+    stdio: 'inherit',
+    windowsHide: true
+  });
   const seconds = (Date.now() - started) / 1000;
 
   if (result.error) {
@@ -86,7 +99,8 @@ if (!headless) {
   process.exit(code);
 }
 
-const NOISE = /persistent cache|DawnGraphiteCache|gpu_process_host|GPU process isn't usable|viz\\host|^\[[0-9]+:[0-9]+\/[0-9.]+:ERROR:/;
+const NOISE =
+  /persistent cache|DawnGraphiteCache|gpu_process_host|GPU process isn't usable|viz\\host|^\[[0-9]+:[0-9]+\/[0-9.]+:ERROR:/;
 const result = spawnSync(exe, [appDir, flag, ...passThrough], { encoding: 'utf8', windowsHide: true });
 
 const stdout = result.stdout || '';

@@ -1,10 +1,8 @@
-'use strict';
-
 const fs = require('fs');
 const path = require('path');
 const { app, nativeImage } = require('electron');
 
-const ASSETS = path.join(__dirname, '..', 'build');
+const ASSETS = path.join(__dirname, '..', 'assets');
 const SOURCE = path.join(ASSETS, 'icon.png');
 const SIZES = [16, 24, 32, 48, 64, 128, 256];
 
@@ -12,7 +10,7 @@ const RADIUS_RATIO = 0.235;
 
 app.disableHardwareAcceleration();
 
-/* 把方图裁成圆角方形图标 */
+/** 把图标裁成圆角并缩放 */
 function cutRounded(img, size) {
   const bitmap = Buffer.from(img.toBitmap());
   const radius = Math.max(2, Math.round(size * RADIUS_RATIO));
@@ -24,7 +22,6 @@ function cutRounded(img, size) {
       const b = bitmap[i];
       const g = bitmap[i + 1];
       const r = bitmap[i + 2];
-
 
       const dx = Math.max(radius - x, x - (max - radius), 0);
       const dy = Math.max(radius - y, y - (max - radius), 0);
@@ -42,7 +39,6 @@ function cutRounded(img, size) {
         continue;
       }
 
-
       const soft = Math.max(0, Math.min(1, radius - dist + 0.5));
       if (soft < 1) {
         bitmap[i] = Math.round(b * soft);
@@ -52,7 +48,6 @@ function cutRounded(img, size) {
       }
     }
   }
-
   return nativeImage.createFromBitmap(bitmap, { width: size, height: size });
 }
 
@@ -66,7 +61,7 @@ app.whenReady().then(() => {
 
   const entries = SIZES.map((size) => ({
     size,
-    png: cutRounded(image.resize({ width: size, height: size, quality: 'best' }), size).toPNG(),
+    png: cutRounded(image.resize({ width: size, height: size, quality: 'best' }), size).toPNG()
   }));
 
   const header = Buffer.alloc(6);
@@ -94,7 +89,6 @@ app.whenReady().then(() => {
   for (const entry of entries) {
     fs.writeFileSync(path.join(ASSETS, `icon-${entry.size}.png`), entry.png);
   }
-
-  console.log(`[icon] 生成 ${entries.map((e) => e.size).join('/')} -> build/icon.ico`);
+  console.log(`[icon] 生成 ${entries.map((e) => e.size).join('/')} -> assets/icon.ico`);
   app.exit(0);
 });

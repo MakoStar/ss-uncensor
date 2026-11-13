@@ -1,5 +1,5 @@
-/* 限制进度事件的刷新频率避免闪烁 */
-export function throttleProgress(paint) {
+/** 合并高频进度回调为定时刷新 */
+export function throttleProgress(paint: (data: any) => void): (data: any) => void {
   let last = 0;
   let pending = null;
   let timer = null;

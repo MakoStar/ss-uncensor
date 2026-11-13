@@ -1,5 +1,3 @@
-/* version 样式 */
-
 #panel-version .toolbar { flex-wrap: nowrap; }
 
 #panel-version .tool-group { flex: 1 1 auto; min-width: 0; }

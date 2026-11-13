@@ -2,30 +2,119 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data: file:" />
   <title>星塔反和谐工具</title>
 </head>
 
 <body>
-  <header class="topbar">
 
-    <nav class="tabs" id="tabs">
-      <button class="tab active" data-tab="fetch">抓取清单</button>
-      <button class="tab" data-tab="browse">清单预览</button>
-      <button class="tab" data-tab="version">版本登记</button>
-      <button class="tab" data-tab="diff">区域差异</button>
-      <button class="tab" data-tab="uncensor">资源下载</button>
-      <button class="tab" data-tab="resources">查看资源</button>
-      <button class="tab" data-tab="replace">替换资源</button>
-      <button class="tab" data-tab="settings">设置</button>
-    </nav>
-  </header>
+  <div id="bg-anim" aria-hidden="true">
+    <div class="nebula n1" style="animation-delay:-3.3s"></div>
+    <div class="nebula n2" style="animation-delay:-7.8s"></div>
+    <div class="nebula n3" style="animation-delay:-28.1s"></div>
+    <div class="stars">
+        <i style="left:91.2%;top:60.3%;--s:1.1px"></i>
+        <i style="left:53.3%;top:14.8%;--s:0.8px"></i>
+        <i style="left:90.4%;top:46.0%;--s:1.5px"></i>
+        <i style="left:40.0%;top:81.2%;--s:1.2px"></i>
+        <i style="left:15.7%;top:89.6%;--s:0.8px"></i>
+        <i style="left:98.0%;top:76.2%;--s:0.9px"></i>
+        <i style="left:25.1%;top:36.1%;--s:1.6px"></i>
+        <i style="left:26.7%;top:95.6%;--s:0.9px"></i>
+        <i style="left:53.5%;top:51.1%;--s:0.8px"></i>
+        <i style="left:14.9%;top:53.7%;--s:0.8px"></i>
+        <i style="left:65.3%;top:65.0%;--s:1.0px"></i>
+        <i style="left:69.8%;top:70.3%;--s:1.3px"></i>
+        <i style="left:33.1%;top:65.1%;--s:1.4px"></i>
+        <i style="left:31.8%;top:12.3%;--s:1.3px"></i>
+        <i style="left:82.8%;top:83.1%;--s:1.1px"></i>
+        <i style="left:34.6%;top:95.2%;--s:0.9px"></i>
+        <i style="left:20.2%;top:7.3%;--s:0.8px"></i>
+        <i style="left:27.5%;top:66.0%;--s:0.8px"></i>
+        <i style="left:57.7%;top:70.7%;--s:0.8px"></i>
+        <i style="left:50.9%;top:25.5%;--s:1.6px"></i>
+        <i style="left:49.5%;top:87.2%;--s:2.0px"></i>
+        <i style="left:42.6%;top:87.8%;--s:1.0px"></i>
+        <i style="left:90.1%;top:10.5%;--s:0.9px"></i>
+        <i style="left:8.2%;top:94.1%;--s:0.9px"></i>
+        <i style="left:79.1%;top:74.1%;--s:0.9px"></i>
+        <i style="left:7.1%;top:30.5%;--s:1.2px"></i>
+        <i style="left:73.1%;top:45.8%;--s:0.9px"></i>
+        <i style="left:2.2%;top:82.2%;--s:1.2px"></i>
+        <i style="left:17.2%;top:58.9%;--s:1.1px"></i>
+        <i style="left:73.1%;top:60.6%;--s:1.2px"></i>
+        <i style="left:93.6%;top:84.6%;--s:1.2px"></i>
+        <i style="left:13.8%;top:93.7%;--s:1.4px"></i>
+        <i style="left:90.0%;top:52.8%;--s:0.9px"></i>
+        <i style="left:50.5%;top:82.8%;--s:0.8px"></i>
+        <i style="left:31.7%;top:40.3%;--s:0.7px"></i>
+        <i style="left:30.9%;top:73.0%;--s:1.0px"></i>
+        <i style="left:82.6%;top:21.9%;--s:1.3px"></i>
+        <i style="left:60.1%;top:12.1%;--s:1.4px"></i>
+        <i style="left:95.6%;top:31.6%;--s:1.1px"></i>
+        <i style="left:96.6%;top:25.4%;--s:1.0px"></i>
+        <i style="left:5.5%;top:80.6%;--s:0.9px"></i>
+        <i style="left:98.2%;top:85.9%;--s:1.1px"></i>
+        <i style="left:23.8%;top:62.3%;--s:2.0px"></i>
+        <i style="left:4.8%;top:71.4%;--s:0.9px"></i>
+        <i style="left:3.3%;top:89.4%;--s:2.3px"></i>
+        <i style="left:38.8%;top:10.0%;--s:0.9px"></i>
+        <i style="left:59.7%;top:39.4%;--s:0.9px"></i>
+        <i style="left:84.6%;top:36.9%;--s:0.9px"></i>
+        <i style="left:20.7%;top:42.9%;--s:0.7px"></i>
+        <i style="left:4.0%;top:45.2%;--s:1.2px"></i>
+        <i style="left:88.5%;top:72.3%;--s:1.8px"></i>
+        <i style="left:40.1%;top:41.0%;--s:1.0px"></i>
+        <i style="left:68.4%;top:57.9%;--s:1.1px"></i>
+        <i style="left:5.3%;top:19.4%;--s:0.8px"></i>
+        <i style="left:61.8%;top:25.4%;--s:1.5px"></i>
+        <i style="left:65.7%;top:36.2%;--s:1.1px"></i>
+        <i style="left:24.6%;top:11.2%;--s:2.1px"></i>
+        <i style="left:59.4%;top:27.2%;--s:1.8px"></i>
+        <i style="left:21.3%;top:95.0%;--s:1.1px"></i>
+        <i style="left:51.9%;top:91.6%;--s:1.3px"></i>
+        <i style="left:1.7%;top:42.5%;--s:0.8px"></i>
+        <i style="left:18.6%;top:83.6%;--s:1.6px"></i>
+        <i style="left:93.2%;top:53.6%;--s:1.2px"></i>
+        <i style="left:45.5%;top:66.9%;--s:1.4px"></i>
+        <i style="left:38.2%;top:36.4%;--s:1.2px"></i>
+        <i style="left:89.1%;top:80.9%;--s:1.3px"></i>
+        <i style="left:5.6%;top:41.3%;--s:2.2px"></i>
+        <i style="left:96.5%;top:64.3%;--s:1.2px"></i>
+        <i style="left:23.0%;top:4.7%;--s:0.8px"></i>
+        <i style="left:91.7%;top:88.2%;--s:1.1px"></i>
+        <i style="left:80.1%;top:16.2%;--s:1.0px"></i>
+        <i style="left:60.4%;top:73.1%;--s:1.2px"></i>
+        <i style="left:67.5%;top:47.4%;--s:0.8px"></i>
+        <i style="left:38.5%;top:22.9%;--s:1.7px"></i>
+        <i style="left:20.7%;top:65.2%;--s:1.0px"></i>
+        <i style="left:66.8%;top:82.9%;--s:0.8px"></i>
+        <i style="left:37.2%;top:17.8%;--s:1.0px"></i>
+        <i style="left:61.2%;top:44.2%;--s:0.9px"></i>
+        <i style="left:72.8%;top:51.4%;--s:1.3px"></i>
+        <i style="left:67.0%;top:92.1%;--s:0.7px"></i>
+        <i style="left:84.3%;top:65.2%;--s:1.5px"></i>
+        <i style="left:2.7%;top:62.9%;--s:1.2px"></i>
+        <i style="left:59.3%;top:77.1%;--s:1.1px"></i>
+        <i style="left:7.9%;top:3.5%;--s:0.9px"></i>
+        <i style="left:47.5%;top:78.0%;--s:0.8px"></i>
+        <i style="left:23.1%;top:24.2%;--s:1.0px"></i>
+        <i style="left:42.9%;top:73.2%;--s:1.2px"></i>
+        <i style="left:8.6%;top:51.1%;--s:1.1px"></i>
+        <i style="left:57.0%;top:67.1%;--s:2.2px"></i>
+        <i style="left:10.6%;top:63.3%;--s:1.0px"></i>
+        <i style="left:29.2%;top:79.4%;--s:0.8px"></i>
+        <i style="left:27.4%;top:91.2%;--s:0.7px"></i>
+        <i style="left:17.0%;top:28.6%;--s:0.8px"></i>
+        <i style="left:43.7%;top:94.4%;--s:0.9px"></i>
+        <i style="left:49.6%;top:95.7%;--s:0.8px"></i>
+        <i style="left:94.4%;top:61.7%;--s:0.7px"></i>
+      </div>
+  </div>
 
-  <main id="panels"></main>
+  <div id="bg-layer" aria-hidden="true"></div>
 
-  <div id="modals"></div>
-
-  <div class="toasts" id="toasts"></div>
+  <div id="app"></div>
 
   <script type="module" src="/src/main.ts"></script>
 </body>

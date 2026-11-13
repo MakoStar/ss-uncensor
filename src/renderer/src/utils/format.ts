@@ -1,49 +1,55 @@
-import { $ } from './dom'
-import { logLine } from './log'
-import { state } from '../app/state'
-import { toSlash } from '@shared/utils'
+import { $ } from './dom';
+import { logLine } from './log';
+import { state } from '../app/state';
+import { toSlash } from '@shared/utils';
 
-/* 按标签格式化后写入运行日志 */
-export const say = (tag, message) => logLine(window.api.formatLog(tag, message), 'out');
+export const say = (tag: string, message: string, scope?: string): void =>
+  logLine(window.api.formatLog(tag, message), 'out', undefined, true, scope);
 
-/* 压缩错误信息只保留首行 */
-export function cleanError(message) {
+/** 清理错误信息里的调用链前缀 */
+export function cleanError(message: any): string {
   return String(message || '')
     .replace(/^Error invoking remote method '[^']+':\s*/, '')
     .replace(/^Error:\s*/, '')
     .trim();
 }
 
-/* 把字节数格式化成易读大小 */
-export const fmtSize = (bytes) => {
+export const fmtSize = (bytes: number): string => {
   if (!bytes) return '0B';
   if (bytes >= 1048576) return `${(bytes / 1048576).toFixed(1)}MB`;
   if (bytes >= 1024) return `${Math.round(bytes / 1024)}KB`;
   return `${bytes}B`;
 };
 
-/* 把长路径压缩成简短形式 */
-export function shortPath(full) {
-  const norm = (value) => String(value || '').replace(/\\/g, '/');
+export const exactSize = (bytes: any): string => {
+  if (bytes === null || bytes === undefined || bytes === '') return '—';
+  const value = Number(bytes);
+  return Number.isFinite(value) ? `${value.toLocaleString('en-US')} B` : String(bytes);
+};
+
+/** 把路径裁成相对输出目录的短路径 */
+export function shortPath(full: string): string {
+  const norm = (value: string): string => String(value || '').replace(/\\/g, '/');
   const root = norm(state.meta && state.meta.dirs ? state.meta.dirs.output : '');
   const text = norm(full);
   if (!root || !text.startsWith(root)) return text;
   return text.slice(root.length).replace(/^\/+/, '');
 }
 
-/* 把绝对路径转成相对路径 */
-export function relPath(target) {
+/** 把路径裁成相对应用目录的路径 */
+export function relPath(target: string): string {
   const text = toSlash(target);
   const root = toSlash(state.meta && state.meta.cwd);
   if (root && text.startsWith(root)) return text.slice(root.length).replace(/^\/+/, '');
   return text;
 }
 
-/* 取路径最后一段文件名 */
-export const basename = (file) => String(file || '').split(/[\\/]/).pop() || '';
+export const basename = (file: string): string =>
+  String(file || '')
+    .split(/[\\/]/)
+    .pop() || '';
 
-/* 把字节数格式化成易读大小 */
-export const sizeText = (bytes) => {
+export const sizeText = (bytes: number): string => {
   if (!bytes && bytes !== 0) return '';
   if (bytes >= 1048576) return `${(bytes / 1048576).toFixed(2)}MB`;
   if (bytes >= 1024) return `${Math.round(bytes / 1024)}KB`;

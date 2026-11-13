@@ -1,7 +1,7 @@
-import { cleanError, say } from '../utils/format'
+import { cleanError, say } from '../utils/format';
 
-/* 统一捕获异步操作异常并提示 */
-export async function guard(action) {
+/** 运行异步调用并吞掉异常 */
+export async function guard(action: () => Promise<any>): Promise<any> {
   try {
     return await action();
   } catch (err) {

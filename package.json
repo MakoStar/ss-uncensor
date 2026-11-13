@@ -1,10 +1,10 @@
 {
   "name": "ssuncensor",
-  "version": "0.1.1-alpha.2",
+  "version": "1.0.0-beta",
   "private": true,
   "description": "星塔反和谐工具测试版",
   "license": "AGPL-3.0-or-later",
-  "main": "dist/main/index.js",
+  "main": "./dist/main/index.js",
   "engines": {
     "node": ">=20"
   },
@@ -18,34 +18,49 @@
     "typecheck:web": "tsc -p tsconfig.web.json --noEmit",
     "icon": "node scripts/icon.js",
     "postinstall": "node scripts/setup.js",
-    "dist": "electron-vite build && electron-builder --win --config"
+    "dist": "electron-vite build && electron-builder --win --config",
+    "dist:setup": "electron-vite build && electron-builder --win nsis --config",
+    "dist:zip": "electron-vite build && electron-builder --win zip --config",
+    "check:imports": "node scripts/imports.js",
+    "format": "prettier --write \"src/**/*.{ts,vue}\" \"scripts/**/*.js\" \"electron.vite.config.ts\""
   },
   "devDependencies": {
-    "@types/node": "^26.6.5",
-    "electron": "^44.9.0",
-    "electron-builder": "^26.15.3",
-    "electron-vite": "^6.0.0",
-    "typescript": "^7.0.2",
-    "vite": "^8.3.4"
+    "@types/node": "26.6.6",
+    "@vitejs/plugin-vue": "6.0.11",
+    "electron": "45.3.2",
+    "electron-builder": "26.18.0",
+    "electron-vite": "6.0.0",
+    "pinia": "4.1.0",
+    "prettier": "3.6.2",
+    "typescript": "7.0.2",
+    "vite": "8.3.8",
+    "vue": "3.5.45"
   },
   "build": {
     "appId": "com.makostar.ssuncensor",
     "productName": "星塔反和谐工具",
     "directories": {
       "output": "release",
-      "buildResources": "build"
+      "buildResources": "assets"
     },
     "files": [
       "dist/**/*",
-      "build/**/*",
-      "scripts/**/*",
+      {
+        "from": "assets",
+        "to": "resources",
+        "filter": [
+          "icon-256.png"
+        ]
+      },
       "package.json"
     ],
     "win": {
       "target": [
-        "nsis"
+        "nsis",
+        "zip"
       ],
-      "icon": "build/icon.ico"
+      "icon": "assets/icon.ico",
+      "artifactName": "ssuncensor-${version}-win-x64.${ext}"
     },
     "nsis": {
       "oneClick": false,
@@ -58,7 +73,7 @@
       "deleteAppDataOnUninstall": false,
       "runAfterFinish": true,
       "artifactName": "ssuncensor-${version}-setup.${ext}",
-      "include": "build/installer.nsh",
+      "include": "assets/installer.nsh",
       "differentialPackage": false
     },
     "copyright": "Copyright (C) 2026 MakoStar"

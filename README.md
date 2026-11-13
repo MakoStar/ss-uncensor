@@ -2,7 +2,7 @@
 
 星塔反和谐工具：Electron 桌面端
 
-> 开发测试版（alpha），仅供个人学习研究使用，请自行承担风险。
+> 开发测试版（alpha），仅供个人学习研究，使用请自行承担风险。
 
 ## 使用方法
 
@@ -19,7 +19,7 @@
 ## 开发
 
 ```bash
-npm install          # 装依赖 + electron 二进制（走 npmmirror）
+npm install          # 装依赖
 npm run dev          # 开发模式，渲染层热更新
 npm run start        # 构建后启动
 npm run build        # 只构建
@@ -38,4 +38,4 @@ git push origin v0.1.0-alpha.2
 
 ## 许可证
 
-[GNU AGPL-3.0-or-later](LICENSE)。修改后分发（包括作为网络服务提供）必须同样开源。
+[GNU AGPL-3.0-or-later](LICENSE)

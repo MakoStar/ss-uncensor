@@ -29,7 +29,6 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      # 只做类型检查和打包
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
         env:

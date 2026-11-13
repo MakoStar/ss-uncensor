@@ -16,8 +16,10 @@ config.json
 uncensor.log
 
 # logs
-log/
+/log/
 *.log
+!src/main/core/log/
+!src/main/core/log/**
 
 # typescript cache
 *.tsbuildinfo
